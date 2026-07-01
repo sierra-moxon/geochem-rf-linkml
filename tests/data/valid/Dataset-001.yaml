@@ -1,0 +1,33 @@
+# VALID: a complete ESS-DIVE (Full) sample-data package as a normalized star schema.
+id: geochem_rf_linkml:dataset/EXAMPLE-001
+name: Example soil temperature dataset
+
+variables:
+  - id: ODM2:temperature
+    label: temperature
+    unit: degree Celsius
+    definition: Temperature of the sample.
+    data_type: numeric
+    statistic_measurement: mean
+    column_or_row_name: soil_temp_mean
+
+samples:
+  - sample_name: FW-106
+    datetime_collected: "2025-06-12T14:30:00Z"
+    latitude: 35.938
+    longitude: -84.312
+
+methods:
+  - attr_id: METHOD_TEMP_01
+    attr_type: method_id
+    attr_description: Thermocouple probe, calibrated.
+    method_instrument: Type-K thermocouple
+
+measurements:
+  - sample: FW-106                 # FK -> Sample.sample_name
+    variable: ODM2:temperature     # FK -> MeasurementVariable.id
+    method:
+      - METHOD_TEMP_01             # FK -> Method.attr_id
+    numeric_value: 18.4
+    raw_value: "18.4 Cel"
+    datetime_measured: "2025-06-12T14:35:00Z"

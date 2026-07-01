@@ -124,6 +124,9 @@ lint:
 [group('model development')]
 gen-doc: _gen-yaml && _add-artifacts
   uv run gen-doc {{gen_doc_args}} -d {{docdir}} {{source_schema_path}}
+  @# Generate a big Mermaid ER diagram of every class as its own doc page.
+  printf '# Entity-Relationship Diagram\n\nAuto-generated Mermaid ER diagram of every class in the schema.\n\n' > {{docdir}}/erdiagram.md
+  uv run gen-erdiagram --format markdown --include-upstream {{source_schema_path}} >> {{docdir}}/erdiagram.md
 
 # Build docs and run test server
 [group('model development')]
@@ -134,22 +137,14 @@ gen-python:
   uv run gen-project -d  {{pymodel}} -I python {{source_schema_path}}
   uv run gen-pydantic {{gen_pydantic_args}} {{source_schema_path}} > {{pymodel}}/{{schema_name}}_pydantic.py
 
-# Generate project files including Python data model
+# Generate project serializations (excel, sql-ddl, jsonschema, rdf/owl only)
 [group('model development')]
 gen-project:
+  @# excel, sqlddl and jsonschema are produced here (see config.yaml `includes`).
   uv run gen-project {{config_yaml}} -d {{dest}} {{source_schema_path}}
-  mkdir -p {{pymodel}}
-  mv {{dest}}/*.py {{pymodel}}/
-  uv run gen-pydantic {{gen_pydantic_args}} {{source_schema_path}} > {{pymodel}}/{{schema_name}}_pydantic.py
 
-  @# Some generators ignore config_yaml or cannot create directories, so we run them separately.
-  uv run gen-java {{gen_java_args}} --output-directory {{dest}}/java/ {{source_schema_path}}
-
-  @if [ ! -d "{{dest}}/typescript" ]; then \
-    mkdir -p {{dest}}/typescript ; \
-  fi
-  uv run gen-typescript {{gen_ts_args}} {{source_schema_path}} > {{dest}}/typescript/{{schema_name}}.ts
-
+  @# The owl (RDF schema) generator cannot create its own output directory when
+  @# driven through config.yaml, so we run it separately here.
   @if [ ! -d "{{dest}}/owl" ]; then \
     mkdir -p {{dest}}/owl ; \
   fi

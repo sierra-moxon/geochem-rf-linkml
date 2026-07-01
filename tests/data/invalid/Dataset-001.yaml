@@ -1,0 +1,19 @@
+# INVALID: violates the schema in two ways:
+#   1. variables[0].unit "furlongs per fortnight" is not in UnitEnum.
+#   2. variables[0] is missing the required `definition` slot.
+id: geochem_rf_linkml:dataset/BAD-001
+name: Invalid dataset
+
+variables:
+  - id: ODM2:temperature
+    label: temperature
+    unit: furlongs per fortnight   # not a permissible UnitEnum value
+    # definition: (missing, but required)
+
+samples:
+  - sample_name: FW-106
+
+measurements:
+  - sample: FW-106
+    variable: ODM2:temperature
+    numeric_value: 18.4

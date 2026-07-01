@@ -1,0 +1,6 @@
+# INVALID: `data_type` is not in DataTypeEnum and required `definition` is missing.
+id: ODM2:specificConductance
+label: specific conductance
+unit: microsiemens per centimeter
+data_type: quantitative        # not a permissible DataTypeEnum value
+# definition: (missing, but required)

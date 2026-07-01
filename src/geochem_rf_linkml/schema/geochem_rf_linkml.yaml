@@ -459,7 +459,7 @@ slots:
     multivalued: true
     inlined_as_list: true
     description: The sample dimension for the dataset.
-    
+
   methods:
     range: Method
     multivalued: true

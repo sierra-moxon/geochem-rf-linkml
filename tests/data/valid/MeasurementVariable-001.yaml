@@ -1,0 +1,9 @@
+# VALID: a single variable-dimension (data-dictionary) row.
+id: ODM2:specificConductance
+label: specific conductance
+unit: microsiemens per centimeter
+definition: Specific conductance (electrical conductivity) of the sample.
+data_type: numeric
+statistic_measurement: mean
+representation_temporal: hour
+column_or_row_name: sp_cond

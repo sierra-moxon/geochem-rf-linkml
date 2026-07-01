@@ -1,0 +1,1212 @@
+@prefix STATO: <http://purl.obolibrary.org/obo/STATO_> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix geochem_rf_linkml: <https://w3id.org/sierra-moxon/geochem-rf-linkml/> .
+@prefix linkml: <https://w3id.org/linkml/> .
+@prefix nmdc: <https://w3id.org/nmdc/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ucum: <https://ucum.org/ucum#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml.owl.ttl> a owl:Ontology ;
+    rdfs:label "geochem-rf-linkml" ;
+    dcterms:license "Apache-2.0" ;
+    dcterms:title "ESS-DIVE Sample Data (Full) Lakehouse Schema" ;
+    rdfs:seeAlso <https://github.com/ess-dive-community/essdive-sample-data-full>,
+        <https://sierra-moxon.github.io/geochem-rf-linkml> ;
+    skos:definition """Warehouse-flavored (star-schema) LinkML schema for the ESS-DIVE Sample Data
+Reporting Format (Full), targeting a relational data lakehouse
+(Iceberg/Delta/Parquet).
+
+This schema has a central `Measurement` fact class referencing the dimension classes
+`Sample`, `MeasurementVariable`, and `Method` by identifier (foreign key), plus
+a `Dataset` container holding the fact table and the variable "data dictionary"
+dimension.""" .
+
+geochem_rf_linkml:Dataset a owl:Class ;
+    rdfs:label "Dataset" ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:measurements ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:variables ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:samples ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:anyURI ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:Sample ;
+            owl:onProperty geochem_rf_linkml:samples ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:name ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:Method ;
+            owl:onProperty geochem_rf_linkml:methods ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:Measurement ;
+            owl:onProperty geochem_rf_linkml:measurements ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:methods ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:name ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:name ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:MeasurementVariable ;
+            owl:onProperty geochem_rf_linkml:variables ] ;
+    skos:definition "A single ESS-DIVE sample-data package: the whole `Measurement` fact table plus the `MeasurementVariable` data-dictionary dimension (and the sample / method dimensions)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:Attribute a owl:Class ;
+    rdfs:label "Attribute" ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:label ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:label ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:label ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:anyURI ;
+            owl:onProperty geochem_rf_linkml:id ] ;
+    skos:definition "A domain, measurement, attribute, property, or descriptor for something measured. The identity of *what* is measured (the \"bare concept\", e.g. `temperature`). Mirrors the BERtron/NMDC Attribute pattern: a thin data-dictionary anchor whose `id` is a controlled-vocabulary CURIE." ;
+    skos:exactMatch nmdc:AttributeValue ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+STATO:0000237 a owl:Class ;
+    rdfs:label "standard deviation" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "ISO 3534:2006-1 (sample) standard deviation." .
+
+STATO:0000401 a owl:Class ;
+    rdfs:label "mean" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "ISO 3534:2006-1 sample mean (arithmetic average)." .
+
+STATO:0000574 a owl:Class ;
+    rdfs:label "median" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "ISO 3534:2006-1 sample median." .
+
+STATO:0000700 a owl:Class ;
+    rdfs:label "p-value" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "ISO 3534:2006-1 p-value." .
+
+ucum:Cel a owl:Class ;
+    rdfs:label "degree Celsius" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: Cel" .
+
+ucum:L a owl:Class ;
+    rdfs:label "liter" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: L" .
+
+ucum:cm a owl:Class ;
+    rdfs:label "centimeter" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: cm" .
+
+ucum:g a owl:Class ;
+    rdfs:label "gram" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: g" .
+
+ucum:kg a owl:Class ;
+    rdfs:label "kilogram" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: kg" .
+
+ucum:km a owl:Class ;
+    rdfs:label "kilometer" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: km" .
+
+ucum:m a owl:Class ;
+    rdfs:label "meter" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: m" .
+
+ucum:mL a owl:Class ;
+    rdfs:label "milliliter" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: mL" .
+
+ucum:mg a owl:Class ;
+    rdfs:label "milligram" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: mg" .
+
+<https://ucum.org/ucum#mg/L> a owl:Class ;
+    rdfs:label "milligrams per liter" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: mg/L" .
+
+ucum:mm a owl:Class ;
+    rdfs:label "millimeter" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: mm" .
+
+<https://ucum.org/ucum#mol/L> a owl:Class ;
+    rdfs:label "moles per liter" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: mol/L" .
+
+<https://ucum.org/ucum#mol/kg> a owl:Class ;
+    rdfs:label "moles per kilogram" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: mol/kg" .
+
+<https://ucum.org/ucum#uS/cm> a owl:Class ;
+    rdfs:label "microsiemens per centimeter" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: uS/cm" .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#flag_id> a owl:Class ;
+    rdfs:label "flag_id" ;
+    rdfs:subClassOf geochem_rf_linkml:AttrTypeEnum ;
+    skos:definition "Identifier for flag." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#method_id> a owl:Class ;
+    rdfs:label "method_id" ;
+    rdfs:subClassOf geochem_rf_linkml:AttrTypeEnum ;
+    skos:definition "Identifier for method." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#sensor_id> a owl:Class ;
+    rdfs:label "sensor_id" ;
+    rdfs:subClassOf geochem_rf_linkml:AttrTypeEnum ;
+    skos:definition "Identifier for sensor." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#treatment_id> a owl:Class ;
+    rdfs:label "treatment_id" ;
+    rdfs:subClassOf geochem_rf_linkml:AttrTypeEnum ;
+    skos:definition "Identifier for treatment." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#date> a owl:Class ;
+    rdfs:label "date" ;
+    rdfs:subClassOf geochem_rf_linkml:DataTypeEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#datetime> a owl:Class ;
+    rdfs:label "datetime" ;
+    rdfs:subClassOf geochem_rf_linkml:DataTypeEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#numeric> a owl:Class ;
+    rdfs:label "numeric" ;
+    rdfs:subClassOf geochem_rf_linkml:DataTypeEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#text> a owl:Class ;
+    rdfs:label "text" ;
+    rdfs:subClassOf geochem_rf_linkml:DataTypeEnum .
+
+geochem_rf_linkml:Measurement a owl:Class ;
+    rdfs:label "Measurement" ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:datetime_value ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:string_value ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:MeasurementVariable ;
+            owl:onProperty geochem_rf_linkml:variable ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:datetime_measured ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:Sample ;
+            owl:onProperty geochem_rf_linkml:sample ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:time_elapsed ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:variable ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:raw_value ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:string_value ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:flag ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:treatment_id ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:Method ;
+            owl:onProperty geochem_rf_linkml:method ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:datetime_measured ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:dateTime ;
+            owl:onProperty geochem_rf_linkml:datetime_value ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:datetime_value ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:treatment_id ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:raw_value ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:numeric_value ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:string_value ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:numeric_value ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:numeric_value ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:time_elapsed ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:time_elapsed ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:flag ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:sample ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:dateTime ;
+            owl:onProperty geochem_rf_linkml:datetime_measured ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:treatment_id ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:variable ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:raw_value ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:sample ] ;
+    skos:definition "A single measured value: the \"fact\" of the star schema. Points at a `Sample` and a `MeasurementVariable` (and optionally a `Method`) by identifier, and carries the actual measure(s)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#15-minute> a owl:Class ;
+    rdfs:label "15-minute" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#2-hour> a owl:Class ;
+    rdfs:label "2-hour" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#30-minute> a owl:Class ;
+    rdfs:label "30-minute" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#5-minute> a owl:Class ;
+    rdfs:label "5-minute" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#day> a owl:Class ;
+    rdfs:label "day" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#hertz> a owl:Class ;
+    rdfs:label "hertz" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#hour> a owl:Class ;
+    rdfs:label "hour" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#minute> a owl:Class ;
+    rdfs:label "minute" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#month> a owl:Class ;
+    rdfs:label "month" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#other> a owl:Class ;
+    rdfs:label "other" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#second> a owl:Class ;
+    rdfs:label "second" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#year> a owl:Class ;
+    rdfs:label "year" ;
+    rdfs:subClassOf geochem_rf_linkml:RepresentationTemporalEnum .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#CV> a owl:Class ;
+    rdfs:label "CV" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "ISO 3534:2006-1 sample coefficient of variation." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#R2> a owl:Class ;
+    rdfs:label "R2" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "Coefficient of determination." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#RMSE> a owl:Class ;
+    rdfs:label "RMSE" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "Root mean square error." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#covariance> a owl:Class ;
+    rdfs:label "covariance" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "ISO 3534:2006-1 sample covariance." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#maximum> a owl:Class ;
+    rdfs:label "maximum" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "Maximum value." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#measurement%20uncertainty> a owl:Class ;
+    rdfs:label "measurement uncertainty" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "JCGM 200:2012 measurement uncertainty." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#minimum> a owl:Class ;
+    rdfs:label "minimum" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "Minimum value." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#standard%20error> a owl:Class ;
+    rdfs:label "standard error" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "ISO 3534:2006-1 standard error of an estimator." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#total> a owl:Class ;
+    rdfs:label "total" ;
+    rdfs:subClassOf geochem_rf_linkml:StatisticEnum ;
+    skos:definition "Sum or cumulative amount over the sampling period." .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#count> a owl:Class ;
+    rdfs:label "count" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: {count}" .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#feet%20%28international%29> a owl:Class ;
+    rdfs:label "feet (international)" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: [ft_i]" .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#pH> a owl:Class ;
+    rdfs:label "pH" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: [pH]" .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#per%20mille> a owl:Class ;
+    rdfs:label "per mille" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: /10*2" .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#percent> a owl:Class ;
+    rdfs:label "percent" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: %" .
+
+<https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#percent%20saturation> a owl:Class ;
+    rdfs:label "percent saturation" ;
+    rdfs:subClassOf geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM: %{saturation}" .
+
+geochem_rf_linkml:flag a owl:DatatypeProperty ;
+    rdfs:label "flag" ;
+    skos:definition "Quality/other flags for the measurement (`{...}_flag`)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:measurements a owl:ObjectProperty ;
+    rdfs:label "measurements" ;
+    rdfs:range geochem_rf_linkml:Measurement ;
+    skos:definition "The measurement fact table for the dataset." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method a owl:ObjectProperty ;
+    rdfs:label "method" ;
+    rdfs:range geochem_rf_linkml:Method ;
+    skos:definition "Foreign key to the method dimension (Full RF)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:methods a owl:ObjectProperty ;
+    rdfs:label "methods" ;
+    rdfs:range geochem_rf_linkml:Method ;
+    skos:definition "The method dimension for the dataset." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:samples a owl:ObjectProperty ;
+    rdfs:label "samples" ;
+    rdfs:range geochem_rf_linkml:Sample ;
+    skos:definition "The sample dimension for the dataset." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:variables a owl:ObjectProperty ;
+    rdfs:label "variables" ;
+    rdfs:range geochem_rf_linkml:MeasurementVariable ;
+    skos:definition "The variable dimension (the data dictionary) for the dataset." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:analysis_detection_limit a owl:DatatypeProperty ;
+    rdfs:label "analysis_detection_limit" ;
+    rdfs:range xsd:float ;
+    skos:definition "Analysis detection limit." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:analysis_precision a owl:DatatypeProperty ;
+    rdfs:label "analysis_precision" ;
+    rdfs:range xsd:float ;
+    skos:definition "Analysis precision." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:attr_description a owl:DatatypeProperty ;
+    rdfs:label "attr_description" ;
+    skos:definition "Description of the method/flag/treatment/sensor." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:column_or_row_long_name a owl:DatatypeProperty ;
+    rdfs:label "column_or_row_long_name" ;
+    skos:definition "Optional long-form name for the column/row." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:column_or_row_name a owl:DatatypeProperty ;
+    rdfs:label "column_or_row_name" ;
+    skos:definition "The arbitrary user-supplied column (or row) label from the source data file. NOT an identity -- kept only as a non-identifying alias." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:data_type a owl:ObjectProperty ;
+    rdfs:label "data_type" ;
+    rdfs:range geochem_rf_linkml:DataTypeEnum ;
+    skos:definition "Data type of the values (Data Dictionary `data_type`)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:datetime_collected a owl:DatatypeProperty ;
+    rdfs:label "datetime_collected" ;
+    rdfs:range xsd:dateTime ;
+    skos:definition "Date/time the sample was collected." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:datetime_measured a owl:DatatypeProperty ;
+    rdfs:label "datetime_measured" ;
+    rdfs:range xsd:dateTime ;
+    skos:definition "Date/time the measurement was made." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:datetime_value a owl:DatatypeProperty ;
+    rdfs:label "datetime_value" ;
+    rdfs:range xsd:dateTime ;
+    skos:definition "The measure when it is a date/time (typed EAV column, sparse)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:definition a owl:DatatypeProperty ;
+    rdfs:label "definition" ;
+    skos:definition "Definition of the measured variable (Data Dictionary `definition`)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:instrument_precision a owl:DatatypeProperty ;
+    rdfs:label "instrument_precision" ;
+    rdfs:range xsd:float ;
+    skos:definition "Instrument precision." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:latitude a owl:DatatypeProperty ;
+    rdfs:label "latitude" ;
+    rdfs:range xsd:float ;
+    skos:definition "Latitude (WGS84 decimal degrees)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:location_description a owl:DatatypeProperty ;
+    rdfs:label "location_description" ;
+    skos:definition "Free-text description of the sampling location." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:longitude a owl:DatatypeProperty ;
+    rdfs:label "longitude" ;
+    rdfs:range xsd:float ;
+    skos:definition "Longitude (WGS84 decimal degrees)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_atmosphere a owl:DatatypeProperty ;
+    rdfs:label "method_atmosphere" ;
+    skos:definition "Atmospheric condition of the method." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_hold_time a owl:DatatypeProperty ;
+    rdfs:label "method_hold_time" ;
+    skos:definition "Sample hold time before analysis." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_instrument a owl:DatatypeProperty ;
+    rdfs:label "method_instrument" ;
+    skos:definition "Instrument used." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_instrument_operator a owl:DatatypeProperty ;
+    rdfs:label "method_instrument_operator" ;
+    skos:definition "Instrument operator." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_lab a owl:DatatypeProperty ;
+    rdfs:label "method_lab" ;
+    skos:definition "Laboratory that performed the analysis." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_lab_contact a owl:DatatypeProperty ;
+    rdfs:label "method_lab_contact" ;
+    skos:definition "Laboratory contact." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_light a owl:DatatypeProperty ;
+    rdfs:label "method_light" ;
+    skos:definition "Light condition of the method." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_medium a owl:DatatypeProperty ;
+    rdfs:label "method_medium" ;
+    skos:definition "Medium of the method." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_moisture a owl:DatatypeProperty ;
+    rdfs:label "method_moisture" ;
+    skos:definition "Moisture condition of the method." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_reference a owl:DatatypeProperty ;
+    rdfs:label "method_reference" ;
+    skos:definition "Citation/reference for the method." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_temp a owl:DatatypeProperty ;
+    rdfs:label "method_temp" ;
+    skos:definition "Temperature condition of the method." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:method_time a owl:DatatypeProperty ;
+    rdfs:label "method_time" ;
+    skos:definition "Timing detail of the method." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:missing_value_code a owl:DatatypeProperty ;
+    rdfs:label "missing_value_code" ;
+    skos:definition "Code used in the data file to indicate a missing value." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:name a owl:DatatypeProperty ;
+    rdfs:label "name" ;
+    skos:definition "A human-readable name for a thing." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:numeric_value a owl:DatatypeProperty ;
+    rdfs:label "numeric_value" ;
+    rdfs:range xsd:float ;
+    skos:definition "The numeric measure (kept typed for Parquet stats / pushdown)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:raw_value a owl:DatatypeProperty ;
+    rdfs:label "raw_value" ;
+    rdfs:range xsd:string ;
+    skos:definition "The unnormalized atomic string as reported (e.g. \"2.2 mg/L\")." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:sample a owl:ObjectProperty ;
+    rdfs:label "sample" ;
+    rdfs:range geochem_rf_linkml:Sample ;
+    skos:definition "Foreign key to the sample dimension." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:sample_name a owl:DatatypeProperty ;
+    rdfs:label "sample_name" ;
+    skos:definition "Name/identifier of the physical sample." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:string_value a owl:DatatypeProperty ;
+    rdfs:label "string_value" ;
+    rdfs:range xsd:string ;
+    skos:definition "The measure when it is textual (typed EAV column, sparse)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:time_elapsed a owl:DatatypeProperty ;
+    rdfs:label "time_elapsed" ;
+    rdfs:range xsd:float ;
+    skos:definition "Elapsed time for a time-series measurement." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:treatment_id a owl:DatatypeProperty ;
+    rdfs:label "treatment_id" ;
+    skos:definition "Treatment identifier applied to this measurement." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:unit_cv_id a owl:DatatypeProperty ;
+    rdfs:label "unit_cv_id" ;
+    rdfs:range xsd:anyURI ;
+    skos:definition "The unit expressed as an ontology CURIE (e.g. UO / UCUM)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:variable a owl:ObjectProperty ;
+    rdfs:label "variable" ;
+    rdfs:range geochem_rf_linkml:MeasurementVariable ;
+    skos:definition "Foreign key to the variable dimension." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:MeasurementVariable a owl:Class ;
+    rdfs:label "MeasurementVariable" ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:column_or_row_long_name ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:StatisticEnum ;
+            owl:onProperty geochem_rf_linkml:statistic_measurement ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:StatisticEnum ;
+            owl:onProperty geochem_rf_linkml:statistic_temporal ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:missing_value_code ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:upper_bound ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:upper_bound ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:RepresentationTemporalEnum ;
+            owl:onProperty geochem_rf_linkml:representation_temporal ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:representation_temporal ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:unit_basis ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:statistic_measurement ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:statistic_measurement ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:statistic_temporal ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:upper_bound ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:data_type ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:anyURI ;
+            owl:onProperty geochem_rf_linkml:unit_cv_id ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:UnitEnum ;
+            owl:onProperty geochem_rf_linkml:unit ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:StatisticEnum ;
+            owl:onProperty geochem_rf_linkml:statistic_spatial ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:missing_value_code ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:unit ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:definition ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:statistic_spatial ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:representation_temporal ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:unit ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:unit_cv_id ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:unit_basis ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:column_or_row_name ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:column_or_row_name ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:unit_cv_id ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:unit_basis ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:data_type ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:column_or_row_long_name ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:definition ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:column_or_row_long_name ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:statistic_temporal ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:column_or_row_name ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:DataTypeEnum ;
+            owl:onProperty geochem_rf_linkml:data_type ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:statistic_spatial ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:definition ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:missing_value_code ],
+        geochem_rf_linkml:Attribute ;
+    owl:hasKey ( geochem_rf_linkml:label geochem_rf_linkml:unit geochem_rf_linkml:unit_basis geochem_rf_linkml:statistic_measurement geochem_rf_linkml:statistic_spatial geochem_rf_linkml:statistic_temporal geochem_rf_linkml:representation_temporal ) ;
+    skos:definition "A fully-qualified measured variable: the bare `Attribute` concept plus its unit and statistical/temporal qualifiers. One row of the ESS-DIVE Data Dictionary. This is the \"variable dimension\" of the star schema; the dimension business key is the qualified-identity tuple (see `unique_keys`), NOT the arbitrary user column name." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:Method a owl:Class ;
+    rdfs:label "Method" ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_instrument ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_hold_time ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_atmosphere ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:instrument_precision ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_reference ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_instrument_operator ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_instrument ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_light ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_medium ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:attr_id ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_hold_time ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_id ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_time ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:analysis_detection_limit ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_time ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:upper_bound ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_temp ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_moisture ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:analysis_detection_limit ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_id ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:instrument_precision ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_description ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_reference ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:instrument_precision ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_moisture ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_type ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_medium ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_medium ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:upper_bound ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:upper_bound ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_lab ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:AttrTypeEnum ;
+            owl:onProperty geochem_rf_linkml:attr_type ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_instrument_operator ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:attr_description ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:analysis_precision ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_lab_contact ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_moisture ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_instrument ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_lab ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_atmosphere ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_instrument_operator ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_description ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_light ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:analysis_precision ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_light ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_hold_time ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_lab_contact ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_lab_contact ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:analysis_detection_limit ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_temp ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_atmosphere ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_time ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:analysis_precision ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_temp ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_lab ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_reference ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_type ] ;
+    owl:hasKey ( geochem_rf_linkml:attr_id geochem_rf_linkml:attr_type ) ;
+    skos:definition "One row of the Full \"Methods & Attributes\" file (`*_sample_attr.csv`): the method/flag/treatment/sensor definition referenced per-measurement." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:Sample a owl:Class ;
+    rdfs:label "Sample" ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom xsd:dateTime ;
+            owl:onProperty geochem_rf_linkml:datetime_collected ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:location_description ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:latitude ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:datetime_collected ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:location_description ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:sample_name ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:location_description ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:longitude ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:longitude ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:sample_name ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:latitude ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:longitude ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:latitude ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:sample_name ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:datetime_collected ] ;
+    skos:definition "A physical sample (or a time point on a sample) that measurements are made on. The sample dimension of the star schema." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:attr_id a owl:DatatypeProperty ;
+    rdfs:label "attr_id" ;
+    skos:definition "Identifier for a method/flag/treatment/sensor (Methods & Attributes `attr_id`)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:attr_type a owl:ObjectProperty ;
+    rdfs:label "attr_type" ;
+    rdfs:range geochem_rf_linkml:AttrTypeEnum ;
+    skos:definition "Kind of attribute identified by `attr_id`." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:label a owl:DatatypeProperty ;
+    rdfs:label "label" ;
+    skos:definition "Human-readable label for the attribute. Where available, the term name from the controlled vocabulary (CUAHSI/ODM2/BERVO)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:representation_temporal a owl:ObjectProperty ;
+    rdfs:label "representation_temporal" ;
+    rdfs:range geochem_rf_linkml:RepresentationTemporalEnum ;
+    skos:definition "Temporal representation / interval (Data Dictionary `representation_temporal`)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:statistic_measurement a owl:ObjectProperty ;
+    rdfs:label "statistic_measurement" ;
+    rdfs:range geochem_rf_linkml:StatisticEnum ;
+    skos:definition "Statistic applied across measurements (Data Dictionary `statistic_measurement`)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:statistic_spatial a owl:ObjectProperty ;
+    rdfs:label "statistic_spatial" ;
+    rdfs:range geochem_rf_linkml:StatisticEnum ;
+    skos:definition "Statistic applied across space (Data Dictionary `statistic_spatial`)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:statistic_temporal a owl:ObjectProperty ;
+    rdfs:label "statistic_temporal" ;
+    rdfs:range geochem_rf_linkml:StatisticEnum ;
+    skos:definition "Statistic applied across time (Data Dictionary `statistic_temporal`)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:unit a owl:ObjectProperty ;
+    rdfs:label "unit" ;
+    rdfs:range geochem_rf_linkml:UnitEnum ;
+    skos:definition "UCUM-coded unit of the measurement (Data Dictionary `unit`)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:unit_basis a owl:DatatypeProperty ;
+    rdfs:label "unit_basis" ;
+    skos:definition "Basis for the reported unit (e.g. dry weight), Data Dictionary `unit_basis`." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:AttrTypeEnum a owl:Class ;
+    rdfs:label "AttrTypeEnum" ;
+    owl:unionOf ( <https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#method_id> <https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#flag_id> <https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#treatment_id> <https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#sensor_id> ) ;
+    skos:definition "Kind of attribute identified in the Full Methods & Attributes file." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> ;
+    linkml:permissible_values <https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#flag_id>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#method_id>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#sensor_id>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum#treatment_id> .
+
+geochem_rf_linkml:DataTypeEnum a owl:Class ;
+    rdfs:label "DataTypeEnum" ;
+    owl:unionOf ( <https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#text> <https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#numeric> <https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#date> <https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#datetime> ) ;
+    skos:definition "Data type of the values in a data-file column." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> ;
+    linkml:permissible_values <https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#date>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#datetime>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#numeric>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum#text> .
+
+geochem_rf_linkml:lower_bound a owl:DatatypeProperty ;
+    rdfs:label "lower_bound" ;
+    rdfs:range xsd:float ;
+    skos:definition "Lower plausibility/validity bound for the value." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:upper_bound a owl:DatatypeProperty ;
+    rdfs:label "upper_bound" ;
+    rdfs:range xsd:float ;
+    skos:definition "Upper plausibility/validity bound for the value." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:id a owl:DatatypeProperty ;
+    rdfs:label "id" ;
+    rdfs:range xsd:anyURI ;
+    skos:definition "A unique identifier for a thing." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
+
+geochem_rf_linkml:RepresentationTemporalEnum a owl:Class ;
+    rdfs:label "RepresentationTemporalEnum" ;
+    owl:unionOf ( <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#year> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#month> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#day> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#2-hour> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#hour> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#30-minute> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#15-minute> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#5-minute> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#minute> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#second> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#hertz> <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#other> ) ;
+    skos:definition "Temporal representation / interval of the measurement." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> ;
+    linkml:permissible_values <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#15-minute>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#2-hour>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#30-minute>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#5-minute>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#day>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#hertz>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#hour>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#minute>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#month>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#other>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#second>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum#year> .
+
+geochem_rf_linkml:StatisticEnum a owl:Class ;
+    rdfs:label "StatisticEnum" ;
+    owl:unionOf ( STATO:0000401 <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#minimum> STATO:0000574 <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#maximum> <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#total> STATO:0000237 <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#standard%20error> <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#measurement%20uncertainty> <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#R2> <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#RMSE> STATO:0000700 <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#CV> <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#covariance> ) ;
+    skos:definition "Statistic applied to a measured variable (Data Dictionary statistic_*)." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> ;
+    linkml:permissible_values STATO:0000237,
+        STATO:0000401,
+        STATO:0000574,
+        STATO:0000700,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#CV>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#R2>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#RMSE>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#covariance>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#maximum>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#measurement%20uncertainty>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#minimum>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#standard%20error>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum#total> .
+
+geochem_rf_linkml:UnitEnum a owl:Class ;
+    rdfs:label "UnitEnum" ;
+    owl:unionOf ( ucum:Cel <https://ucum.org/ucum#uS/cm> <https://ucum.org/ucum#mg/L> <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#percent%20saturation> <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#pH> <https://ucum.org/ucum#mol/kg> <https://ucum.org/ucum#mol/L> <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#percent> <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#per%20mille> <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#count> ucum:mL ucum:L ucum:mm ucum:cm ucum:m ucum:km ucum:mg ucum:g ucum:kg <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#feet%20%28international%29> ) ;
+    skos:definition "UCUM-coded units permitted for ESS-DIVE sample-data measurements." ;
+    skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> ;
+    linkml:permissible_values ucum:Cel,
+        ucum:L,
+        ucum:cm,
+        ucum:g,
+        ucum:kg,
+        ucum:km,
+        ucum:m,
+        ucum:mL,
+        ucum:mg,
+        <https://ucum.org/ucum#mg/L>,
+        ucum:mm,
+        <https://ucum.org/ucum#mol/L>,
+        <https://ucum.org/ucum#mol/kg>,
+        <https://ucum.org/ucum#uS/cm>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#count>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#feet%20%28international%29>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#pH>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#per%20mille>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#percent>,
+        <https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum#percent%20saturation> .
+
+

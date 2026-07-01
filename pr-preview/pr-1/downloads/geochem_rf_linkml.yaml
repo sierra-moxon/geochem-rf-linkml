@@ -1,0 +1,1597 @@
+name: geochem-rf-linkml
+description: 'Warehouse-flavored (star-schema) LinkML schema for the ESS-DIVE Sample
+  Data
+
+  Reporting Format (Full), targeting a relational data lakehouse
+
+  (Iceberg/Delta/Parquet).
+
+
+  This schema has a central `Measurement` fact class referencing the dimension classes
+
+  `Sample`, `MeasurementVariable`, and `Method` by identifier (foreign key), plus
+
+  a `Dataset` container holding the fact table and the variable "data dictionary"
+
+  dimension.'
+title: ESS-DIVE Sample Data (Full) Lakehouse Schema
+see_also:
+- https://sierra-moxon.github.io/geochem-rf-linkml
+- https://github.com/ess-dive-community/essdive-sample-data-full
+id: https://w3id.org/sierra-moxon/geochem-rf-linkml
+imports:
+- linkml:types
+license: Apache-2.0
+prefixes:
+  geochem_rf_linkml:
+    prefix_prefix: geochem_rf_linkml
+    prefix_reference: https://w3id.org/sierra-moxon/geochem-rf-linkml/
+  linkml:
+    prefix_prefix: linkml
+    prefix_reference: https://w3id.org/linkml/
+  schema:
+    prefix_prefix: schema
+    prefix_reference: http://schema.org/
+  nmdc:
+    prefix_prefix: nmdc
+    prefix_reference: https://w3id.org/nmdc/
+  MIXS:
+    prefix_prefix: MIXS
+    prefix_reference: https://w3id.org/mixs/
+  ucum:
+    prefix_prefix: ucum
+    prefix_reference: https://ucum.org/ucum#
+  UO:
+    prefix_prefix: UO
+    prefix_reference: http://purl.obolibrary.org/obo/UO_
+  STATO:
+    prefix_prefix: STATO
+    prefix_reference: http://purl.obolibrary.org/obo/STATO_
+  NCIT:
+    prefix_prefix: NCIT
+    prefix_reference: http://purl.obolibrary.org/obo/NCIT_
+  CUAHSI:
+    prefix_prefix: CUAHSI
+    prefix_reference: http://his.cuahsi.org/mastercvreg/VariableNameCV#
+  ODM2:
+    prefix_prefix: ODM2
+    prefix_reference: http://vocabulary.odm2.org/variablename/
+  BERVO:
+    prefix_prefix: BERVO
+    prefix_reference: https://w3id.org/ber-data/bervo/
+  WGS84:
+    prefix_prefix: WGS84
+    prefix_reference: http://www.w3.org/2003/01/geo/wgs84_pos#
+default_prefix: geochem_rf_linkml
+default_range: string
+types:
+  string:
+    name: string
+    definition_uri: https://w3id.org/linkml/String
+    description: A character string
+    notes:
+    - In RDF serializations, a slot with range of string is treated as a literal or
+      type xsd:string. If you are authoring schemas in LinkML YAML, the type is referenced
+      with the lower case "string".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Text
+    base: str
+    uri: xsd:string
+  integer:
+    name: integer
+    definition_uri: https://w3id.org/linkml/Integer
+    description: An integer
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "integer".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Integer
+    base: int
+    uri: xsd:integer
+  boolean:
+    name: boolean
+    definition_uri: https://w3id.org/linkml/Boolean
+    description: A binary (true or false) value
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "boolean".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Boolean
+    base: Bool
+    uri: xsd:boolean
+    repr: bool
+  float:
+    name: float
+    definition_uri: https://w3id.org/linkml/Float
+    description: A real number that conforms to the xsd:float specification
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "float".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Float
+    base: float
+    uri: xsd:float
+  double:
+    name: double
+    definition_uri: https://w3id.org/linkml/Double
+    description: A real number that conforms to the xsd:double specification
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "double".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    close_mappings:
+    - schema:Float
+    base: float
+    uri: xsd:double
+  decimal:
+    name: decimal
+    definition_uri: https://w3id.org/linkml/Decimal
+    description: A real number with arbitrary precision that conforms to the xsd:decimal
+      specification
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "decimal".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    broad_mappings:
+    - schema:Number
+    base: Decimal
+    uri: xsd:decimal
+  time:
+    name: time
+    definition_uri: https://w3id.org/linkml/Time
+    description: A time object represents a (local) time of day, independent of any
+      particular day
+    notes:
+    - URI is dateTime because OWL reasoners do not work with straight date or time
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "time".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Time
+    base: XSDTime
+    uri: xsd:time
+    repr: str
+  date:
+    name: date
+    definition_uri: https://w3id.org/linkml/Date
+    description: a date (year, month and day) in an idealized calendar
+    notes:
+    - URI is dateTime because OWL reasoners don't work with straight date or time
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "date".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Date
+    base: XSDDate
+    uri: xsd:date
+    repr: str
+  datetime:
+    name: datetime
+    definition_uri: https://w3id.org/linkml/Datetime
+    description: The combination of a date and time
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "datetime".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:DateTime
+    base: XSDDateTime
+    uri: xsd:dateTime
+    repr: str
+  date_or_datetime:
+    name: date_or_datetime
+    definition_uri: https://w3id.org/linkml/DateOrDatetime
+    description: Either a date or a datetime
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "date_or_datetime".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: linkml:DateOrDatetime
+    repr: str
+  uriorcurie:
+    name: uriorcurie
+    definition_uri: https://w3id.org/linkml/Uriorcurie
+    description: a URI or a CURIE
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "uriorcurie".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: URIorCURIE
+    uri: xsd:anyURI
+    repr: str
+  curie:
+    name: curie
+    definition_uri: https://w3id.org/linkml/Curie
+    conforms_to: https://www.w3.org/TR/curie/
+    description: a compact URI
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "curie".
+    comments:
+    - in RDF serializations this MUST be expanded to a URI
+    - in non-RDF serializations MAY be serialized as the compact representation
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: Curie
+    uri: xsd:string
+    repr: str
+  uri:
+    name: uri
+    definition_uri: https://w3id.org/linkml/Uri
+    conforms_to: https://www.ietf.org/rfc/rfc3987.txt
+    description: a complete URI
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "uri".
+    comments:
+    - in RDF serializations a slot with range of uri is treated as a literal or type
+      xsd:anyURI unless it is an identifier or a reference to an identifier, in which
+      case it is translated directly to a node
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    close_mappings:
+    - schema:URL
+    base: URI
+    uri: xsd:anyURI
+    repr: str
+  ncname:
+    name: ncname
+    definition_uri: https://w3id.org/linkml/Ncname
+    description: Prefix part of CURIE
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "ncname".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: NCName
+    uri: xsd:string
+    repr: str
+  objectidentifier:
+    name: objectidentifier
+    definition_uri: https://w3id.org/linkml/Objectidentifier
+    description: A URI or CURIE that represents an object in the model.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "objectidentifier".
+    comments:
+    - Used for inheritance and type checking
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: ElementIdentifier
+    uri: shex:iri
+    repr: str
+  nodeidentifier:
+    name: nodeidentifier
+    definition_uri: https://w3id.org/linkml/Nodeidentifier
+    description: A URI, CURIE or BNODE that represents a node in a model.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "nodeidentifier".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: NodeIdentifier
+    uri: shex:nonLiteral
+    repr: str
+  jsonpointer:
+    name: jsonpointer
+    definition_uri: https://w3id.org/linkml/Jsonpointer
+    conforms_to: https://datatracker.ietf.org/doc/html/rfc6901
+    description: A string encoding a JSON Pointer. The value of the string MUST conform
+      to JSON Point syntax and SHOULD dereference to a valid object within the current
+      instance document when encoded in tree form.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "jsonpointer".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: xsd:string
+    repr: str
+  jsonpath:
+    name: jsonpath
+    definition_uri: https://w3id.org/linkml/Jsonpath
+    conforms_to: https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html
+    description: A string encoding a JSON Path. The value of the string MUST conform
+      to JSON Point syntax and SHOULD dereference to zero or more valid objects within
+      the current instance document when encoded in tree form.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "jsonpath".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: xsd:string
+    repr: str
+  sparqlpath:
+    name: sparqlpath
+    definition_uri: https://w3id.org/linkml/Sparqlpath
+    conforms_to: https://www.w3.org/TR/sparql11-query/#propertypaths
+    description: A string encoding a SPARQL Property Path. The value of the string
+      MUST conform to SPARQL syntax and SHOULD dereference to zero or more valid objects
+      within the current instance document when encoded as RDF.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "sparqlpath".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: xsd:string
+    repr: str
+enums:
+  UnitEnum:
+    name: UnitEnum
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/UnitEnum
+    description: UCUM-coded units permitted for ESS-DIVE sample-data measurements.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    permissible_values:
+      degree Celsius:
+        text: degree Celsius
+        description: 'UCUM: Cel'
+        meaning: ucum:Cel
+      microsiemens per centimeter:
+        text: microsiemens per centimeter
+        description: 'UCUM: uS/cm'
+        meaning: ucum:uS/cm
+      milligrams per liter:
+        text: milligrams per liter
+        description: 'UCUM: mg/L'
+        meaning: ucum:mg/L
+      percent saturation:
+        text: percent saturation
+        description: 'UCUM: %{saturation}'
+      pH:
+        text: pH
+        description: 'UCUM: [pH]'
+      moles per kilogram:
+        text: moles per kilogram
+        description: 'UCUM: mol/kg'
+        meaning: ucum:mol/kg
+      moles per liter:
+        text: moles per liter
+        description: 'UCUM: mol/L'
+        meaning: ucum:mol/L
+      percent:
+        text: percent
+        description: 'UCUM: %'
+      per mille:
+        text: per mille
+        description: 'UCUM: /10*2'
+      count:
+        text: count
+        description: 'UCUM: {count}'
+      milliliter:
+        text: milliliter
+        description: 'UCUM: mL'
+        meaning: ucum:mL
+      liter:
+        text: liter
+        description: 'UCUM: L'
+        meaning: ucum:L
+      millimeter:
+        text: millimeter
+        description: 'UCUM: mm'
+        meaning: ucum:mm
+      centimeter:
+        text: centimeter
+        description: 'UCUM: cm'
+        meaning: ucum:cm
+      meter:
+        text: meter
+        description: 'UCUM: m'
+        meaning: ucum:m
+      kilometer:
+        text: kilometer
+        description: 'UCUM: km'
+        meaning: ucum:km
+      milligram:
+        text: milligram
+        description: 'UCUM: mg'
+        meaning: ucum:mg
+      gram:
+        text: gram
+        description: 'UCUM: g'
+        meaning: ucum:g
+      kilogram:
+        text: kilogram
+        description: 'UCUM: kg'
+        meaning: ucum:kg
+      feet (international):
+        text: feet (international)
+        description: 'UCUM: [ft_i]'
+  DataTypeEnum:
+    name: DataTypeEnum
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/DataTypeEnum
+    description: Data type of the values in a data-file column.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    permissible_values:
+      text:
+        text: text
+      numeric:
+        text: numeric
+      date:
+        text: date
+      datetime:
+        text: datetime
+  StatisticEnum:
+    name: StatisticEnum
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/StatisticEnum
+    description: Statistic applied to a measured variable (Data Dictionary statistic_*).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    permissible_values:
+      mean:
+        text: mean
+        description: ISO 3534:2006-1 sample mean (arithmetic average).
+        meaning: STATO:0000401
+      minimum:
+        text: minimum
+        description: Minimum value.
+      median:
+        text: median
+        description: ISO 3534:2006-1 sample median.
+        meaning: STATO:0000574
+      maximum:
+        text: maximum
+        description: Maximum value.
+      total:
+        text: total
+        description: Sum or cumulative amount over the sampling period.
+      standard deviation:
+        text: standard deviation
+        description: ISO 3534:2006-1 (sample) standard deviation.
+        meaning: STATO:0000237
+      standard error:
+        text: standard error
+        description: ISO 3534:2006-1 standard error of an estimator.
+      measurement uncertainty:
+        text: measurement uncertainty
+        description: JCGM 200:2012 measurement uncertainty.
+      R2:
+        text: R2
+        description: Coefficient of determination.
+      RMSE:
+        text: RMSE
+        description: Root mean square error.
+      p-value:
+        text: p-value
+        description: ISO 3534:2006-1 p-value.
+        meaning: STATO:0000700
+      CV:
+        text: CV
+        description: ISO 3534:2006-1 sample coefficient of variation.
+      covariance:
+        text: covariance
+        description: ISO 3534:2006-1 sample covariance.
+  RepresentationTemporalEnum:
+    name: RepresentationTemporalEnum
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/RepresentationTemporalEnum
+    description: Temporal representation / interval of the measurement.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    permissible_values:
+      year:
+        text: year
+      month:
+        text: month
+      day:
+        text: day
+      2-hour:
+        text: 2-hour
+      hour:
+        text: hour
+      30-minute:
+        text: 30-minute
+      15-minute:
+        text: 15-minute
+      5-minute:
+        text: 5-minute
+      minute:
+        text: minute
+      second:
+        text: second
+      hertz:
+        text: hertz
+      other:
+        text: other
+  AttrTypeEnum:
+    name: AttrTypeEnum
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/AttrTypeEnum
+    description: Kind of attribute identified in the Full Methods & Attributes file.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    permissible_values:
+      method_id:
+        text: method_id
+        description: Identifier for method.
+      flag_id:
+        text: flag_id
+        description: Identifier for flag.
+      treatment_id:
+        text: treatment_id
+        description: Identifier for treatment.
+      sensor_id:
+        text: sensor_id
+        description: Identifier for sensor.
+slots:
+  id:
+    name: id
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/id
+    description: A unique identifier for a thing.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - schema:identifier
+    slot_uri: schema:identifier
+    identifier: true
+    owner: Dataset
+    domain_of:
+    - Attribute
+    - Dataset
+    range: uriorcurie
+    required: true
+  name:
+    name: name
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/name
+    description: A human-readable name for a thing.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - schema:name
+    slot_uri: schema:name
+    owner: Dataset
+    domain_of:
+    - Dataset
+    range: string
+  label:
+    name: label
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/label
+    description: Human-readable label for the attribute. Where available, the term
+      name from the controlled vocabulary (CUAHSI/ODM2/BERVO).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - schema:name
+    slot_uri: schema:name
+    owner: Attribute
+    domain_of:
+    - Attribute
+    range: string
+    required: true
+  definition:
+    name: definition
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/definition
+    description: Definition of the measured variable (Data Dictionary `definition`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - schema:description
+    slot_uri: schema:description
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: string
+  column_or_row_name:
+    name: column_or_row_name
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/column_or_row_name
+    description: The arbitrary user-supplied column (or row) label from the source
+      data file. NOT an identity -- kept only as a non-identifying alias.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:column_or_row_name
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: string
+  column_or_row_long_name:
+    name: column_or_row_long_name
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/column_or_row_long_name
+    description: Optional long-form name for the column/row.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:column_or_row_long_name
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: string
+  unit:
+    name: unit
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/unit
+    description: UCUM-coded unit of the measurement (Data Dictionary `unit`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:unit
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: UnitEnum
+  unit_cv_id:
+    name: unit_cv_id
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/unit_cv_id
+    description: The unit expressed as an ontology CURIE (e.g. UO / UCUM).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:unit_cv_id
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: uriorcurie
+  unit_basis:
+    name: unit_basis
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/unit_basis
+    description: Basis for the reported unit (e.g. dry weight), Data Dictionary `unit_basis`.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:unit_basis
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: string
+  data_type:
+    name: data_type
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/data_type
+    description: Data type of the values (Data Dictionary `data_type`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:data_type
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: DataTypeEnum
+  missing_value_code:
+    name: missing_value_code
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/missing_value_code
+    description: Code used in the data file to indicate a missing value.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:missing_value_code
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: string
+  statistic_measurement:
+    name: statistic_measurement
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/statistic_measurement
+    description: Statistic applied across measurements (Data Dictionary `statistic_measurement`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:statistic_measurement
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: StatisticEnum
+  statistic_spatial:
+    name: statistic_spatial
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/statistic_spatial
+    description: Statistic applied across space (Data Dictionary `statistic_spatial`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:statistic_spatial
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: StatisticEnum
+  statistic_temporal:
+    name: statistic_temporal
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/statistic_temporal
+    description: Statistic applied across time (Data Dictionary `statistic_temporal`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:statistic_temporal
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: StatisticEnum
+  representation_temporal:
+    name: representation_temporal
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/representation_temporal
+    description: Temporal representation / interval (Data Dictionary `representation_temporal`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:representation_temporal
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    range: RepresentationTemporalEnum
+  lower_bound:
+    name: lower_bound
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/lower_bound
+    description: Lower plausibility/validity bound for the value.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:lower_bound
+    owner: Method
+    domain_of:
+    - MeasurementVariable
+    - Method
+    range: float
+  upper_bound:
+    name: upper_bound
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/upper_bound
+    description: Upper plausibility/validity bound for the value.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:upper_bound
+    owner: Method
+    domain_of:
+    - MeasurementVariable
+    - Method
+    range: float
+  sample_name:
+    name: sample_name
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/sample_name
+    description: Name/identifier of the physical sample.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:sample_name
+    owner: Sample
+    domain_of:
+    - Sample
+    range: string
+  datetime_collected:
+    name: datetime_collected
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/datetime_collected
+    description: Date/time the sample was collected.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:datetime_collected
+    owner: Sample
+    domain_of:
+    - Sample
+    range: datetime
+  latitude:
+    name: latitude
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/latitude
+    description: Latitude (WGS84 decimal degrees).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - WGS84:lat
+    slot_uri: WGS84:lat
+    owner: Sample
+    domain_of:
+    - Sample
+    range: float
+  longitude:
+    name: longitude
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/longitude
+    description: Longitude (WGS84 decimal degrees).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - WGS84:long
+    slot_uri: WGS84:long
+    owner: Sample
+    domain_of:
+    - Sample
+    range: float
+  location_description:
+    name: location_description
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/location_description
+    description: Free-text description of the sampling location.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:location_description
+    owner: Sample
+    domain_of:
+    - Sample
+    range: string
+  attr_id:
+    name: attr_id
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/attr_id
+    description: Identifier for a method/flag/treatment/sensor (Methods & Attributes
+      `attr_id`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:attr_id
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  attr_type:
+    name: attr_type
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/attr_type
+    description: Kind of attribute identified by `attr_id`.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:attr_type
+    owner: Method
+    domain_of:
+    - Method
+    range: AttrTypeEnum
+  attr_description:
+    name: attr_description
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/attr_description
+    description: Description of the method/flag/treatment/sensor.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:attr_description
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  analysis_detection_limit:
+    name: analysis_detection_limit
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/analysis_detection_limit
+    description: Analysis detection limit.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:analysis_detection_limit
+    owner: Method
+    domain_of:
+    - Method
+    range: float
+  analysis_precision:
+    name: analysis_precision
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/analysis_precision
+    description: Analysis precision.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:analysis_precision
+    owner: Method
+    domain_of:
+    - Method
+    range: float
+  instrument_precision:
+    name: instrument_precision
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/instrument_precision
+    description: Instrument precision.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:instrument_precision
+    owner: Method
+    domain_of:
+    - Method
+    range: float
+  method_instrument:
+    name: method_instrument
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_instrument
+    description: Instrument used.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_instrument
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_reference:
+    name: method_reference
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_reference
+    description: Citation/reference for the method.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_reference
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_hold_time:
+    name: method_hold_time
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_hold_time
+    description: Sample hold time before analysis.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_hold_time
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_temp:
+    name: method_temp
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_temp
+    description: Temperature condition of the method.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_temp
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_light:
+    name: method_light
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_light
+    description: Light condition of the method.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_light
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_atmosphere:
+    name: method_atmosphere
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_atmosphere
+    description: Atmospheric condition of the method.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_atmosphere
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_moisture:
+    name: method_moisture
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_moisture
+    description: Moisture condition of the method.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_moisture
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_medium:
+    name: method_medium
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_medium
+    description: Medium of the method.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_medium
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_time:
+    name: method_time
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_time
+    description: Timing detail of the method.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_time
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_lab_contact:
+    name: method_lab_contact
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_lab_contact
+    description: Laboratory contact.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_lab_contact
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_instrument_operator:
+    name: method_instrument_operator
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_instrument_operator
+    description: Instrument operator.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_instrument_operator
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  method_lab:
+    name: method_lab
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method_lab
+    description: Laboratory that performed the analysis.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method_lab
+    owner: Method
+    domain_of:
+    - Method
+    range: string
+  sample:
+    name: sample
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/sample
+    description: Foreign key to the sample dimension.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:sample
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: Sample
+    inlined: false
+  variable:
+    name: variable
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/variable
+    description: Foreign key to the variable dimension.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:variable
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: MeasurementVariable
+    inlined: false
+  method:
+    name: method
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method
+    description: Foreign key to the method dimension (Full RF).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:method
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: Method
+    inlined: false
+  numeric_value:
+    name: numeric_value
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/numeric_value
+    description: The numeric measure (kept typed for Parquet stats / pushdown).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - nmdc:numeric_value
+    slot_uri: nmdc:numeric_value
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: float
+  string_value:
+    name: string_value
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/string_value
+    description: The measure when it is textual (typed EAV column, sparse).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:string_value
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: string
+  datetime_value:
+    name: datetime_value
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/datetime_value
+    description: The measure when it is a date/time (typed EAV column, sparse).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:datetime_value
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: datetime
+  raw_value:
+    name: raw_value
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/raw_value
+    description: The unnormalized atomic string as reported (e.g. "2.2 mg/L").
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - nmdc:raw_value
+    slot_uri: nmdc:raw_value
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: string
+  flag:
+    name: flag
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/flag
+    description: Quality/other flags for the measurement (`{...}_flag`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:flag
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: string
+    multivalued: true
+  treatment_id:
+    name: treatment_id
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/treatment_id
+    description: Treatment identifier applied to this measurement.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:treatment_id
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: string
+  datetime_measured:
+    name: datetime_measured
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/datetime_measured
+    description: Date/time the measurement was made.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:datetime_measured
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: datetime
+  time_elapsed:
+    name: time_elapsed
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/time_elapsed
+    description: Elapsed time for a time-series measurement.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:time_elapsed
+    owner: Measurement
+    domain_of:
+    - Measurement
+    range: float
+  measurements:
+    name: measurements
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/measurements
+    description: The measurement fact table for the dataset.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:measurements
+    owner: Dataset
+    domain_of:
+    - Dataset
+    range: Measurement
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  variables:
+    name: variables
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/variables
+    description: The variable dimension (the data dictionary) for the dataset.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:variables
+    owner: Dataset
+    domain_of:
+    - Dataset
+    range: MeasurementVariable
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  samples:
+    name: samples
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/samples
+    description: The sample dimension for the dataset.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:samples
+    owner: Dataset
+    domain_of:
+    - Dataset
+    range: Sample
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  methods:
+    name: methods
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/methods
+    description: The method dimension for the dataset.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slot_uri: geochem_rf_linkml:methods
+    owner: Dataset
+    domain_of:
+    - Dataset
+    range: Method
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  MeasurementVariable_id:
+    name: MeasurementVariable_id
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/id
+    description: CURIE for the qualified variable (or its underlying CUAHSI/ODM2/BERVO
+      term). Serves as the dimension key / foreign-key target.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - schema:identifier
+    is_a: id
+    domain: MeasurementVariable
+    slot_uri: schema:identifier
+    identifier: true
+    alias: id
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    is_usage_slot: true
+    usage_slot_name: id
+    range: uriorcurie
+    required: true
+  MeasurementVariable_unit:
+    name: MeasurementVariable_unit
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/unit
+    description: UCUM-coded unit of the measurement (Data Dictionary `unit`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: unit
+    domain: MeasurementVariable
+    slot_uri: geochem_rf_linkml:unit
+    alias: unit
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    is_usage_slot: true
+    usage_slot_name: unit
+    range: UnitEnum
+    required: true
+  MeasurementVariable_definition:
+    name: MeasurementVariable_definition
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/definition
+    description: Definition of the measured variable (Data Dictionary `definition`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - schema:description
+    is_a: definition
+    domain: MeasurementVariable
+    slot_uri: schema:description
+    alias: definition
+    owner: MeasurementVariable
+    domain_of:
+    - MeasurementVariable
+    is_usage_slot: true
+    usage_slot_name: definition
+    range: string
+    required: true
+  Sample_sample_name:
+    name: Sample_sample_name
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/sample_name
+    description: Name/identifier of the physical sample.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: sample_name
+    domain: Sample
+    slot_uri: geochem_rf_linkml:sample_name
+    identifier: true
+    alias: sample_name
+    owner: Sample
+    domain_of:
+    - Sample
+    is_usage_slot: true
+    usage_slot_name: sample_name
+    range: string
+    required: true
+  Method_attr_id:
+    name: Method_attr_id
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/attr_id
+    description: Identifier for a method/flag/treatment/sensor (Methods & Attributes
+      `attr_id`).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: attr_id
+    domain: Method
+    slot_uri: geochem_rf_linkml:attr_id
+    identifier: true
+    alias: attr_id
+    owner: Method
+    domain_of:
+    - Method
+    is_usage_slot: true
+    usage_slot_name: attr_id
+    range: string
+    required: true
+  Method_attr_type:
+    name: Method_attr_type
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/attr_type
+    description: Kind of attribute identified by `attr_id`.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: attr_type
+    domain: Method
+    slot_uri: geochem_rf_linkml:attr_type
+    alias: attr_type
+    owner: Method
+    domain_of:
+    - Method
+    is_usage_slot: true
+    usage_slot_name: attr_type
+    range: AttrTypeEnum
+    required: true
+  Method_attr_description:
+    name: Method_attr_description
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/attr_description
+    description: Description of the method/flag/treatment/sensor.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: attr_description
+    domain: Method
+    slot_uri: geochem_rf_linkml:attr_description
+    alias: attr_description
+    owner: Method
+    domain_of:
+    - Method
+    is_usage_slot: true
+    usage_slot_name: attr_description
+    range: string
+    required: true
+  Measurement_sample:
+    name: Measurement_sample
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/sample
+    description: Foreign key to the sample dimension.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: sample
+    domain: Measurement
+    slot_uri: geochem_rf_linkml:sample
+    alias: sample
+    owner: Measurement
+    domain_of:
+    - Measurement
+    is_usage_slot: true
+    usage_slot_name: sample
+    range: Sample
+    required: true
+    inlined: false
+  Measurement_variable:
+    name: Measurement_variable
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/variable
+    description: Foreign key to the variable dimension.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: variable
+    domain: Measurement
+    slot_uri: geochem_rf_linkml:variable
+    alias: variable
+    owner: Measurement
+    domain_of:
+    - Measurement
+    is_usage_slot: true
+    usage_slot_name: variable
+    range: MeasurementVariable
+    required: true
+    inlined: false
+  Measurement_method:
+    name: Measurement_method
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/method
+    description: Foreign key to the method dimension (Full RF).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: method
+    domain: Measurement
+    slot_uri: geochem_rf_linkml:method
+    alias: method
+    owner: Measurement
+    domain_of:
+    - Measurement
+    is_usage_slot: true
+    usage_slot_name: method
+    range: Method
+    multivalued: true
+    inlined: false
+  Measurement_numeric_value:
+    name: Measurement_numeric_value
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/numeric_value
+    description: The numeric measure (kept typed for Parquet stats / pushdown).
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - nmdc:numeric_value
+    is_a: numeric_value
+    domain: Measurement
+    slot_uri: nmdc:numeric_value
+    alias: numeric_value
+    owner: Measurement
+    domain_of:
+    - Measurement
+    is_usage_slot: true
+    usage_slot_name: numeric_value
+    range: float
+  Dataset_measurements:
+    name: Dataset_measurements
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/measurements
+    description: The measurement fact table for the dataset.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: measurements
+    domain: Dataset
+    slot_uri: geochem_rf_linkml:measurements
+    alias: measurements
+    owner: Dataset
+    domain_of:
+    - Dataset
+    is_usage_slot: true
+    usage_slot_name: measurements
+    range: Measurement
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  Dataset_variables:
+    name: Dataset_variables
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/variables
+    description: The variable dimension (the data dictionary) for the dataset.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: variables
+    domain: Dataset
+    slot_uri: geochem_rf_linkml:variables
+    alias: variables
+    owner: Dataset
+    domain_of:
+    - Dataset
+    is_usage_slot: true
+    usage_slot_name: variables
+    range: MeasurementVariable
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  Dataset_samples:
+    name: Dataset_samples
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/samples
+    description: The sample dimension for the dataset.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: samples
+    domain: Dataset
+    slot_uri: geochem_rf_linkml:samples
+    alias: samples
+    owner: Dataset
+    domain_of:
+    - Dataset
+    is_usage_slot: true
+    usage_slot_name: samples
+    range: Sample
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  Dataset_methods:
+    name: Dataset_methods
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/methods
+    description: The method dimension for the dataset.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: methods
+    domain: Dataset
+    slot_uri: geochem_rf_linkml:methods
+    alias: methods
+    owner: Dataset
+    domain_of:
+    - Dataset
+    is_usage_slot: true
+    usage_slot_name: methods
+    range: Method
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+classes:
+  Attribute:
+    name: Attribute
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/Attribute
+    description: 'A domain, measurement, attribute, property, or descriptor for something
+      measured. The identity of *what* is measured (the "bare concept", e.g. `temperature`).
+      Mirrors the BERtron/NMDC Attribute pattern: a thin data-dictionary anchor whose
+      `id` is a controlled-vocabulary CURIE.'
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    mappings:
+    - nmdc:AttributeValue
+    slots:
+    - id
+    - label
+    class_uri: nmdc:AttributeValue
+  MeasurementVariable:
+    name: MeasurementVariable
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/MeasurementVariable
+    description: 'A fully-qualified measured variable: the bare `Attribute` concept
+      plus its unit and statistical/temporal qualifiers. One row of the ESS-DIVE Data
+      Dictionary. This is the "variable dimension" of the star schema; the dimension
+      business key is the qualified-identity tuple (see `unique_keys`), NOT the arbitrary
+      user column name.'
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    is_a: Attribute
+    slots:
+    - label
+    - MeasurementVariable_unit
+    - unit_cv_id
+    - MeasurementVariable_definition
+    - data_type
+    - unit_basis
+    - missing_value_code
+    - statistic_measurement
+    - statistic_spatial
+    - statistic_temporal
+    - representation_temporal
+    - lower_bound
+    - upper_bound
+    - column_or_row_name
+    - column_or_row_long_name
+    - MeasurementVariable_id
+    slot_usage:
+      id:
+        name: id
+        description: CURIE for the qualified variable (or its underlying CUAHSI/ODM2/BERVO
+          term). Serves as the dimension key / foreign-key target.
+        identifier: true
+      unit:
+        name: unit
+        range: UnitEnum
+        required: true
+      definition:
+        name: definition
+        required: true
+    class_uri: geochem_rf_linkml:MeasurementVariable
+    unique_keys:
+      variable_identity:
+        unique_key_name: variable_identity
+        unique_key_slots:
+        - label
+        - unit
+        - unit_basis
+        - statistic_measurement
+        - statistic_spatial
+        - statistic_temporal
+        - representation_temporal
+        description: 'dedups the conformed variable: two differently-named columns
+          with the same qualified tuple are the SAME MeasurementVariable (attacks
+          soil_ph vs soil_p_h).'
+  Sample:
+    name: Sample
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/Sample
+    description: A physical sample (or a time point on a sample) that measurements
+      are made on. The sample dimension of the star schema.
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slots:
+    - Sample_sample_name
+    - datetime_collected
+    - latitude
+    - longitude
+    - location_description
+    slot_usage:
+      sample_name:
+        name: sample_name
+        identifier: true
+        required: true
+    class_uri: geochem_rf_linkml:Sample
+  Method:
+    name: Method
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/Method
+    description: 'One row of the Full "Methods & Attributes" file (`*_sample_attr.csv`):
+      the method/flag/treatment/sensor definition referenced per-measurement.'
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slots:
+    - Method_attr_id
+    - Method_attr_type
+    - Method_attr_description
+    - analysis_detection_limit
+    - analysis_precision
+    - instrument_precision
+    - lower_bound
+    - upper_bound
+    - method_instrument
+    - method_reference
+    - method_hold_time
+    - method_temp
+    - method_light
+    - method_atmosphere
+    - method_moisture
+    - method_medium
+    - method_time
+    - method_lab_contact
+    - method_instrument_operator
+    - method_lab
+    slot_usage:
+      attr_id:
+        name: attr_id
+        identifier: true
+        required: true
+      attr_type:
+        name: attr_type
+        range: AttrTypeEnum
+        required: true
+      attr_description:
+        name: attr_description
+        required: true
+    class_uri: geochem_rf_linkml:Method
+    unique_keys:
+      attr_key:
+        unique_key_name: attr_key
+        unique_key_slots:
+        - attr_id
+        - attr_type
+        description: Composite unique key from the Full RF.
+  Measurement:
+    name: Measurement
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/Measurement
+    description: 'A single measured value: the "fact" of the star schema. Points at
+      a `Sample` and a `MeasurementVariable` (and optionally a `Method`) by identifier,
+      and carries the actual measure(s).'
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slots:
+    - Measurement_sample
+    - Measurement_variable
+    - Measurement_method
+    - Measurement_numeric_value
+    - string_value
+    - datetime_value
+    - raw_value
+    - flag
+    - treatment_id
+    - datetime_measured
+    - time_elapsed
+    slot_usage:
+      sample:
+        name: sample
+        range: Sample
+        required: true
+        inlined: false
+      variable:
+        name: variable
+        range: MeasurementVariable
+        required: true
+        inlined: false
+      method:
+        name: method
+        range: Method
+        multivalued: true
+        inlined: false
+      numeric_value:
+        name: numeric_value
+        range: float
+    class_uri: geochem_rf_linkml:Measurement
+  Dataset:
+    name: Dataset
+    definition_uri: https://w3id.org/sierra-moxon/geochem-rf-linkml/Dataset
+    description: 'A single ESS-DIVE sample-data package: the whole `Measurement` fact
+      table plus the `MeasurementVariable` data-dictionary dimension (and the sample
+      / method dimensions).'
+    from_schema: https://w3id.org/sierra-moxon/geochem-rf-linkml
+    slots:
+    - id
+    - name
+    - Dataset_measurements
+    - Dataset_variables
+    - Dataset_samples
+    - Dataset_methods
+    slot_usage:
+      measurements:
+        name: measurements
+        range: Measurement
+        multivalued: true
+        inlined_as_list: true
+      variables:
+        name: variables
+        range: MeasurementVariable
+        multivalued: true
+        inlined_as_list: true
+      samples:
+        name: samples
+        range: Sample
+        multivalued: true
+        inlined_as_list: true
+      methods:
+        name: methods
+        range: Method
+        multivalued: true
+        inlined_as_list: true
+    class_uri: geochem_rf_linkml:Dataset
+    tree_root: true
+metamodel_version: 1.11.0
+source_file: geochem_rf_linkml.yaml
+source_file_date: '2026-07-01T13:39:35'
+source_file_size: 17921
+generation_date: '2026-07-01T13:39:46'
+

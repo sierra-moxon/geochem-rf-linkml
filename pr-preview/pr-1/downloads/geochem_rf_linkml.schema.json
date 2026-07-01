@@ -1,0 +1,616 @@
+{
+    "$defs": {
+        "AttrTypeEnum": {
+            "description": "Kind of attribute identified in the Full Methods & Attributes file.",
+            "enum": [
+                "method_id",
+                "flag_id",
+                "treatment_id",
+                "sensor_id"
+            ],
+            "title": "AttrTypeEnum",
+            "type": "string"
+        },
+        "Attribute": {
+            "additionalProperties": false,
+            "description": "A domain, measurement, attribute, property, or descriptor for something measured. The identity of *what* is measured (the \"bare concept\", e.g. `temperature`). Mirrors the BERtron/NMDC Attribute pattern: a thin data-dictionary anchor whose `id` is a controlled-vocabulary CURIE.",
+            "properties": {
+                "id": {
+                    "description": "A unique identifier for a thing.",
+                    "type": "string"
+                },
+                "label": {
+                    "description": "Human-readable label for the attribute. Where available, the term name from the controlled vocabulary (CUAHSI/ODM2/BERVO).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "label"
+            ],
+            "title": "Attribute",
+            "type": "object"
+        },
+        "DataTypeEnum": {
+            "description": "Data type of the values in a data-file column.",
+            "enum": [
+                "text",
+                "numeric",
+                "date",
+                "datetime"
+            ],
+            "title": "DataTypeEnum",
+            "type": "string"
+        },
+        "Dataset": {
+            "additionalProperties": false,
+            "description": "A single ESS-DIVE sample-data package: the whole `Measurement` fact table plus the `MeasurementVariable` data-dictionary dimension (and the sample / method dimensions).",
+            "properties": {
+                "id": {
+                    "description": "A unique identifier for a thing.",
+                    "type": "string"
+                },
+                "measurements": {
+                    "description": "The measurement fact table for the dataset.",
+                    "items": {
+                        "$ref": "#/$defs/Measurement"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "methods": {
+                    "description": "The method dimension for the dataset.",
+                    "items": {
+                        "$ref": "#/$defs/Method"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "name": {
+                    "description": "A human-readable name for a thing.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "samples": {
+                    "description": "The sample dimension for the dataset.",
+                    "items": {
+                        "$ref": "#/$defs/Sample"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "variables": {
+                    "description": "The variable dimension (the data dictionary) for the dataset.",
+                    "items": {
+                        "$ref": "#/$defs/MeasurementVariable"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Dataset",
+            "type": "object"
+        },
+        "Measurement": {
+            "additionalProperties": false,
+            "description": "A single measured value: the \"fact\" of the star schema. Points at a `Sample` and a `MeasurementVariable` (and optionally a `Method`) by identifier, and carries the actual measure(s).",
+            "properties": {
+                "datetime_measured": {
+                    "description": "Date/time the measurement was made.",
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "datetime_value": {
+                    "description": "The measure when it is a date/time (typed EAV column, sparse).",
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "flag": {
+                    "description": "Quality/other flags for the measurement (`{...}_flag`).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "method": {
+                    "description": "Foreign key to the method dimension (Full RF).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "numeric_value": {
+                    "description": "The numeric measure (kept typed for Parquet stats / pushdown).",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "raw_value": {
+                    "description": "The unnormalized atomic string as reported (e.g. \"2.2 mg/L\").",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sample": {
+                    "description": "Foreign key to the sample dimension.",
+                    "type": "string"
+                },
+                "string_value": {
+                    "description": "The measure when it is textual (typed EAV column, sparse).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "time_elapsed": {
+                    "description": "Elapsed time for a time-series measurement.",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "treatment_id": {
+                    "description": "Treatment identifier applied to this measurement.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "variable": {
+                    "description": "Foreign key to the variable dimension.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "sample",
+                "variable"
+            ],
+            "title": "Measurement",
+            "type": "object"
+        },
+        "MeasurementVariable": {
+            "additionalProperties": false,
+            "description": "A fully-qualified measured variable: the bare `Attribute` concept plus its unit and statistical/temporal qualifiers. One row of the ESS-DIVE Data Dictionary. This is the \"variable dimension\" of the star schema; the dimension business key is the qualified-identity tuple (see `unique_keys`), NOT the arbitrary user column name.",
+            "properties": {
+                "column_or_row_long_name": {
+                    "description": "Optional long-form name for the column/row.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "column_or_row_name": {
+                    "description": "The arbitrary user-supplied column (or row) label from the source data file. NOT an identity -- kept only as a non-identifying alias.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "data_type": {
+                    "$ref": "#/$defs/DataTypeEnum",
+                    "description": "Data type of the values (Data Dictionary `data_type`)."
+                },
+                "definition": {
+                    "description": "Definition of the measured variable (Data Dictionary `definition`).",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "CURIE for the qualified variable (or its underlying CUAHSI/ODM2/BERVO term). Serves as the dimension key / foreign-key target.",
+                    "type": "string"
+                },
+                "label": {
+                    "description": "Human-readable label for the attribute. Where available, the term name from the controlled vocabulary (CUAHSI/ODM2/BERVO).",
+                    "type": "string"
+                },
+                "lower_bound": {
+                    "description": "Lower plausibility/validity bound for the value.",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "missing_value_code": {
+                    "description": "Code used in the data file to indicate a missing value.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "representation_temporal": {
+                    "$ref": "#/$defs/RepresentationTemporalEnum",
+                    "description": "Temporal representation / interval (Data Dictionary `representation_temporal`)."
+                },
+                "statistic_measurement": {
+                    "$ref": "#/$defs/StatisticEnum",
+                    "description": "Statistic applied across measurements (Data Dictionary `statistic_measurement`)."
+                },
+                "statistic_spatial": {
+                    "$ref": "#/$defs/StatisticEnum",
+                    "description": "Statistic applied across space (Data Dictionary `statistic_spatial`)."
+                },
+                "statistic_temporal": {
+                    "$ref": "#/$defs/StatisticEnum",
+                    "description": "Statistic applied across time (Data Dictionary `statistic_temporal`)."
+                },
+                "unit": {
+                    "$ref": "#/$defs/UnitEnum",
+                    "description": "UCUM-coded unit of the measurement (Data Dictionary `unit`)."
+                },
+                "unit_basis": {
+                    "description": "Basis for the reported unit (e.g. dry weight), Data Dictionary `unit_basis`.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "unit_cv_id": {
+                    "description": "The unit expressed as an ontology CURIE (e.g. UO / UCUM).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "upper_bound": {
+                    "description": "Upper plausibility/validity bound for the value.",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "unit",
+                "definition",
+                "id",
+                "label"
+            ],
+            "title": "MeasurementVariable",
+            "type": "object"
+        },
+        "Method": {
+            "additionalProperties": false,
+            "description": "One row of the Full \"Methods & Attributes\" file (`*_sample_attr.csv`): the method/flag/treatment/sensor definition referenced per-measurement.",
+            "properties": {
+                "analysis_detection_limit": {
+                    "description": "Analysis detection limit.",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "analysis_precision": {
+                    "description": "Analysis precision.",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "attr_description": {
+                    "description": "Description of the method/flag/treatment/sensor.",
+                    "type": "string"
+                },
+                "attr_id": {
+                    "description": "Identifier for a method/flag/treatment/sensor (Methods & Attributes `attr_id`).",
+                    "type": "string"
+                },
+                "attr_type": {
+                    "$ref": "#/$defs/AttrTypeEnum",
+                    "description": "Kind of attribute identified by `attr_id`."
+                },
+                "instrument_precision": {
+                    "description": "Instrument precision.",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "lower_bound": {
+                    "description": "Lower plausibility/validity bound for the value.",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "method_atmosphere": {
+                    "description": "Atmospheric condition of the method.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_hold_time": {
+                    "description": "Sample hold time before analysis.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_instrument": {
+                    "description": "Instrument used.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_instrument_operator": {
+                    "description": "Instrument operator.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_lab": {
+                    "description": "Laboratory that performed the analysis.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_lab_contact": {
+                    "description": "Laboratory contact.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_light": {
+                    "description": "Light condition of the method.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_medium": {
+                    "description": "Medium of the method.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_moisture": {
+                    "description": "Moisture condition of the method.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_reference": {
+                    "description": "Citation/reference for the method.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_temp": {
+                    "description": "Temperature condition of the method.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "method_time": {
+                    "description": "Timing detail of the method.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "upper_bound": {
+                    "description": "Upper plausibility/validity bound for the value.",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "attr_id",
+                "attr_type",
+                "attr_description"
+            ],
+            "title": "Method",
+            "type": "object"
+        },
+        "RepresentationTemporalEnum": {
+            "description": "Temporal representation / interval of the measurement.",
+            "enum": [
+                "year",
+                "month",
+                "day",
+                "2-hour",
+                "hour",
+                "30-minute",
+                "15-minute",
+                "5-minute",
+                "minute",
+                "second",
+                "hertz",
+                "other"
+            ],
+            "title": "RepresentationTemporalEnum",
+            "type": "string"
+        },
+        "Sample": {
+            "additionalProperties": false,
+            "description": "A physical sample (or a time point on a sample) that measurements are made on. The sample dimension of the star schema.",
+            "properties": {
+                "datetime_collected": {
+                    "description": "Date/time the sample was collected.",
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "latitude": {
+                    "description": "Latitude (WGS84 decimal degrees).",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "location_description": {
+                    "description": "Free-text description of the sampling location.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "longitude": {
+                    "description": "Longitude (WGS84 decimal degrees).",
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "sample_name": {
+                    "description": "Name/identifier of the physical sample.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "sample_name"
+            ],
+            "title": "Sample",
+            "type": "object"
+        },
+        "StatisticEnum": {
+            "description": "Statistic applied to a measured variable (Data Dictionary statistic_*).",
+            "enum": [
+                "mean",
+                "minimum",
+                "median",
+                "maximum",
+                "total",
+                "standard deviation",
+                "standard error",
+                "measurement uncertainty",
+                "R2",
+                "RMSE",
+                "p-value",
+                "CV",
+                "covariance"
+            ],
+            "title": "StatisticEnum",
+            "type": "string"
+        },
+        "UnitEnum": {
+            "description": "UCUM-coded units permitted for ESS-DIVE sample-data measurements.",
+            "enum": [
+                "degree Celsius",
+                "microsiemens per centimeter",
+                "milligrams per liter",
+                "percent saturation",
+                "pH",
+                "moles per kilogram",
+                "moles per liter",
+                "percent",
+                "per mille",
+                "count",
+                "milliliter",
+                "liter",
+                "millimeter",
+                "centimeter",
+                "meter",
+                "kilometer",
+                "milligram",
+                "gram",
+                "kilogram",
+                "feet (international)"
+            ],
+            "title": "UnitEnum",
+            "type": "string"
+        }
+    },
+    "$id": "https://w3id.org/sierra-moxon/geochem-rf-linkml",
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "additionalProperties": true,
+    "description": "A single ESS-DIVE sample-data package: the whole `Measurement` fact table plus the `MeasurementVariable` data-dictionary dimension (and the sample / method dimensions).",
+    "metamodel_version": "1.11.0",
+    "properties": {
+        "id": {
+            "description": "A unique identifier for a thing.",
+            "type": "string"
+        },
+        "measurements": {
+            "description": "The measurement fact table for the dataset.",
+            "items": {
+                "$ref": "#/$defs/Measurement"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "methods": {
+            "description": "The method dimension for the dataset.",
+            "items": {
+                "$ref": "#/$defs/Method"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "name": {
+            "description": "A human-readable name for a thing.",
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "samples": {
+            "description": "The sample dimension for the dataset.",
+            "items": {
+                "$ref": "#/$defs/Sample"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        },
+        "variables": {
+            "description": "The variable dimension (the data dictionary) for the dataset.",
+            "items": {
+                "$ref": "#/$defs/MeasurementVariable"
+            },
+            "type": [
+                "array",
+                "null"
+            ]
+        }
+    },
+    "required": [
+        "id"
+    ],
+    "title": "geochem-rf-linkml",
+    "type": "object",
+    "version": null
+}

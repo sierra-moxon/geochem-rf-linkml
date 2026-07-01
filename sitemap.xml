@@ -13,11 +13,27 @@
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/AttrTypeEnum/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/Attribute/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
          <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/Boolean/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
          <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/Curie/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/DataTypeEnum/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/Dataset/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
@@ -57,7 +73,15 @@
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
-         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/NamedThing/</loc>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/Measurement/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/MeasurementVariable/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/Method/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
@@ -73,19 +97,19 @@
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
-         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/Person/</loc>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/RepresentationTemporalEnum/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
-         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/PersonCollection/</loc>
-         <lastmod>2026-07-01</lastmod>
-    </url>
-    <url>
-         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/PersonStatus/</loc>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/Sample/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
          <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/Sparqlpath/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/StatisticEnum/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
@@ -97,6 +121,10 @@
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/UnitEnum/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
          <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/Uri/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
@@ -105,15 +133,59 @@
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
-         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/age_in_years/</loc>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/analysis_detection_limit/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
-         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/birth_date/</loc>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/analysis_precision/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
-         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/description/</loc>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/attr_description/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/attr_id/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/attr_type/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/column_or_row_long_name/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/column_or_row_name/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/data_type/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/datetime_collected/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/datetime_measured/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/datetime_value/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/definition/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/erdiagram/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/flag/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
@@ -125,19 +197,171 @@
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/instrument_precision/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/label/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/latitude/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/location_description/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/longitude/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/lower_bound/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/measurements/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_atmosphere/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_hold_time/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_instrument/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_instrument_operator/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_lab/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_lab_contact/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_light/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_medium/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_moisture/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_reference/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_temp/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/method_time/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/methods/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/missing_value_code/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
          <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/name/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
-         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/people/</loc>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/numeric_value/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
-         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/primary_email/</loc>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/raw_value/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
     <url>
-         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/vital_status/</loc>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/representation_temporal/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/sample/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/sample_name/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/samples/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/statistic_measurement/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/statistic_spatial/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/statistic_temporal/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/string_value/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/time_elapsed/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/treatment_id/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/unit/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/unit_basis/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/unit_cv_id/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/upper_bound/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/variable/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/elements/variables/</loc>
+         <lastmod>2026-07-01</lastmod>
+    </url>
+    <url>
+         <loc>https://sierra-moxon.github.io/geochem-rf-linkml/templates-linkml/</loc>
          <lastmod>2026-07-01</lastmod>
     </url>
 </urlset>

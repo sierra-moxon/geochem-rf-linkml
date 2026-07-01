@@ -1,20 +1,36 @@
 ---
 id: https://w3id.org/sierra-moxon/geochem-rf-linkml
 name: geochem-rf-linkml
-title: geochem-rf-linkml
+title: ESS-DIVE Sample Data (Full) Lakehouse Schema
 description: |-
-  This is the project description.
+  Warehouse-flavored (star-schema) LinkML schema for the ESS-DIVE Sample Data
+  Reporting Format (Full), targeting a relational data lakehouse
+  (Iceberg/Delta/Parquet).
+
+  This schema has a central `Measurement` fact class referencing the dimension classes
+  `Sample`, `MeasurementVariable`, and `Method` by identifier (foreign key), plus
+  a `Dataset` container holding the fact table and the variable "data dictionary"
+  dimension.
+
 license: Apache-2.0
 see_also:
   - https://sierra-moxon.github.io/geochem-rf-linkml
+  - https://github.com/ess-dive-community/essdive-sample-data-full
 
 prefixes:
   geochem_rf_linkml: https://w3id.org/sierra-moxon/geochem-rf-linkml/
   linkml: https://w3id.org/linkml/
-  biolink: https://w3id.org/biolink/vocab/
   schema: http://schema.org/
-  PATO: http://purl.obolibrary.org/obo/PATO_
-  example: http://www.example.org/rdf#
+  nmdc: https://w3id.org/nmdc/
+  MIXS: https://w3id.org/mixs/
+  ucum: https://ucum.org/ucum#
+  UO: http://purl.obolibrary.org/obo/UO_
+  STATO: http://purl.obolibrary.org/obo/STATO_
+  NCIT: http://purl.obolibrary.org/obo/NCIT_
+  CUAHSI: http://his.cuahsi.org/mastercvreg/VariableNameCV#
+  ODM2: http://vocabulary.odm2.org/variablename/
+  BERVO: https://w3id.org/ber-data/bervo/
+  WGS84: http://www.w3.org/2003/01/geo/wgs84_pos#
 default_prefix: geochem_rf_linkml
 default_range: string
 
@@ -23,35 +39,208 @@ imports:
 
 classes:
 
-  NamedThing:
+  # ---------------------------------------------------------------------------
+  # DIMENSION (base): the thin BERtron-style Attribute = a data-dictionary entry.
+  # `id` is the CV-bound identity (CUAHSI/ODM2/BERVO CURIE), NOT the arbitrary
+  # user column name.
+  # ---------------------------------------------------------------------------
+  Attribute:
     description: >-
-      A generic grouping for any identifiable entity
+      A domain, measurement, attribute, property, or descriptor for something
+      measured. The identity of *what* is measured (the "bare concept", e.g.
+      `temperature`). Mirrors the BERtron/NMDC Attribute pattern: a thin
+      data-dictionary anchor whose `id` is a controlled-vocabulary CURIE.
+    class_uri: nmdc:AttributeValue
+    slots:
+      - id
+      - label
+
+  # ---------------------------------------------------------------------------
+  # The "variable" dimension = the Data Dictionary.
+  # A *qualified* variable = bare Attribute + unit + statistic_* + temporal
+  # representation.
+  # ---------------------------------------------------------------------------
+  MeasurementVariable:
+    is_a: Attribute
+    description: >-
+      A fully-qualified measured variable: the bare `Attribute` concept plus its
+      unit and statistical/temporal qualifiers. One row of the ESS-DIVE Data
+      Dictionary. This is the "variable dimension" of the star schema; the
+      dimension business key is the qualified-identity tuple (see `unique_keys`),
+      NOT the arbitrary user column name.
+    slots:
+      - unit
+      - unit_cv_id
+      - definition
+      - data_type
+      - unit_basis
+      - missing_value_code
+      - statistic_measurement
+      - statistic_spatial
+      - statistic_temporal
+      - representation_temporal
+      - lower_bound
+      - upper_bound
+      - column_or_row_name
+      - column_or_row_long_name
+    slot_usage:
+      id:
+        identifier: true          # <-- makes MeasurementVariable referenceable
+        description: >-
+          CURIE for the qualified variable (or its underlying CUAHSI/ODM2/BERVO
+          term). Serves as the dimension key / foreign-key target.
+      unit:
+        required: true
+        range: UnitEnum
+      definition:
+        required: true
+    unique_keys:
+      variable_identity:
+        description: >-
+          dedups the conformed variable: two
+          differently-named columns with the same qualified tuple are the SAME
+          MeasurementVariable (attacks soil_ph vs soil_p_h).
+        unique_key_slots:
+          - label
+          - unit
+          - unit_basis
+          - statistic_measurement
+          - statistic_spatial
+          - statistic_temporal
+          - representation_temporal
+
+  # ---------------------------------------------------------------------------
+  # DIMENSION: the sample dimension (dim_sample).
+  # ---------------------------------------------------------------------------
+  Sample:
+    description: >-
+      A physical sample (or a time point on a sample) that measurements are made
+      on. The sample dimension of the star schema.
+    slots:
+      - sample_name
+      - datetime_collected
+      - latitude
+      - longitude
+      - location_description
+    slot_usage:
+      sample_name:
+        identifier: true          # <-- makes Sample referenceable
+        required: true
+
+  # ---------------------------------------------------------------------------
+  # the method = Methods & Attributes file.
+  # Composite unique key (attr_id, attr_type) per the Full RF.
+  # ---------------------------------------------------------------------------
+  Method:
+    description: >-
+      One row of the Full "Methods & Attributes" file (`*_sample_attr.csv`): the
+      method/flag/treatment/sensor definition referenced per-measurement.
+    slots:
+      - attr_id
+      - attr_type
+      - attr_description
+      - analysis_detection_limit
+      - analysis_precision
+      - instrument_precision
+      - lower_bound
+      - upper_bound
+      - method_instrument
+      - method_reference
+      - method_hold_time
+      - method_temp
+      - method_light
+      - method_atmosphere
+      - method_moisture
+      - method_medium
+      - method_time
+      - method_lab_contact
+      - method_instrument_operator
+      - method_lab
+    slot_usage:
+      attr_id:
+        identifier: true          # <-- makes Method referenceable (a dimension)
+        required: true
+      attr_type:
+        required: true
+        range: AttrTypeEnum
+      attr_description:
+        required: true
+    unique_keys:
+      attr_key:
+        description: Composite unique key from the Full RF.
+        unique_key_slots:
+          - attr_id
+          - attr_type
+
+  # ---------------------------------------------------------------------------
+  # the measurement fact table (fact_measurement).
+  # one row per sample x variable. References by id
+  # (inlined: false => stored as a foreign key, not a nested object).
+  # ---------------------------------------------------------------------------
+  Measurement:
+    description: >-
+      A single measured value: the "fact" of the star schema. Points at a
+      `Sample` and a `MeasurementVariable` (and optionally a `Method`) by
+      identifier, and carries the actual measure(s).
+    slots:
+      - sample
+      - variable
+      - method
+      - numeric_value
+      - string_value
+      - datetime_value
+      - raw_value
+      - flag
+      - treatment_id
+      - datetime_measured
+      - time_elapsed
+    slot_usage:
+      sample:
+        range: Sample
+        inlined: false            # store the id (FK), not the object
+        required: true
+      variable:
+        range: MeasurementVariable
+        inlined: false            # store the id (FK), not the object
+        required: true
+      method:
+        range: Method
+        inlined: false            # store the id (FK), not the object
+        multivalued: true         # `{measurement_column_name}_method_id` is ';'-delimited - discuss
+      numeric_value:
+        range: float              # the "measure" -- QuantityValue.numeric_value
+
+  # ---------------------------------------------------------------------------
+  # CONTAINER: the dataset. tree_root so it serializes as the top-level document.
+  # ---------------------------------------------------------------------------
+  Dataset:
+    tree_root: true
+    description: >-
+      A single ESS-DIVE sample-data package: the whole `Measurement` fact table
+      plus the `MeasurementVariable` data-dictionary dimension (and the sample /
+      method dimensions).
     slots:
       - id
       - name
-      - description
-    class_uri: schema:Thing
-
-  Person:
-    is_a: NamedThing
-    description: >-
-      Represents a Person
-    slots:
-      - primary_email
-      - birth_date
-      - age_in_years
-      - vital_status
+      - measurements
+      - variables
+      - samples
+      - methods
     slot_usage:
-      primary_email:
-        pattern: "^\\S+@[\\S+\\.]+\\S+"
-
-  PersonCollection:
-    tree_root: true
-    description: >-
-      A holder for Person objects
-    attributes:
-      people:
-        range: Person
+      measurements:
+        range: Measurement
+        multivalued: true
+        inlined_as_list: true     # the whole "fact table"
+      variables:
+        range: MeasurementVariable
+        multivalued: true
+        inlined_as_list: true     # the whole "variable dimension" (data dictionary)
+      samples:
+        range: Sample
+        multivalued: true
+        inlined_as_list: true
+      methods:
+        range: Method
         multivalued: true
         inlined_as_list: true
 
@@ -60,39 +249,318 @@ slots:
     identifier: true
     slot_uri: schema:identifier
     range: uriorcurie
-    description: A unique identifier for a thing
+    description: A unique identifier for a thing.
+
   name:
     slot_uri: schema:name
-    description: A human-readable name for a thing
-  description:
+    description: A human-readable name for a thing.
+  label:
+    slot_uri: schema:name
+    required: true
+    description: >-
+      Human-readable label for the attribute. Where available, the term name
+      from the controlled vocabulary (CUAHSI/ODM2/BERVO).
+  definition:
     slot_uri: schema:description
-    description: A human-readable description for a thing
-  primary_email:
-    slot_uri: schema:email
-    description: The main email address of a person
-  birth_date:
-    slot_uri: schema:birthDate
-    range: date
-    description: Date on which a person is born
-  age_in_years:
-    range: integer
-    description: Number of years since birth
-  vital_status:
-    range: PersonStatus
-    description: living or dead status
+    description: Definition of the measured variable (Data Dictionary `definition`).
 
+  column_or_row_name:
+    description: >-
+      The arbitrary user-supplied column (or row) label from the source data
+      file. NOT an identity -- kept only as a non-identifying alias.
+
+  column_or_row_long_name:
+    description: Optional long-form name for the column/row.
+
+  unit:
+    range: UnitEnum
+    description: >-
+      UCUM-coded unit of the measurement (Data Dictionary `unit`).
+
+  unit_cv_id:
+    range: uriorcurie
+    description: The unit expressed as an ontology CURIE (e.g. UO / UCUM).
+
+  unit_basis:
+    description: Basis for the reported unit (e.g. dry weight), Data Dictionary `unit_basis`.
+
+  data_type:
+    range: DataTypeEnum
+    description: Data type of the values (Data Dictionary `data_type`).
+
+  missing_value_code:
+    description: Code used in the data file to indicate a missing value.
+
+  statistic_measurement:
+    range: StatisticEnum
+    description: Statistic applied across measurements (Data Dictionary `statistic_measurement`).
+
+  statistic_spatial:
+    range: StatisticEnum
+    description: Statistic applied across space (Data Dictionary `statistic_spatial`).
+
+  statistic_temporal:
+    range: StatisticEnum
+    description: Statistic applied across time (Data Dictionary `statistic_temporal`).
+
+  representation_temporal:
+    range: RepresentationTemporalEnum
+    description: Temporal representation / interval (Data Dictionary `representation_temporal`).
+
+  lower_bound:
+    range: float
+    description: Lower plausibility/validity bound for the value.
+
+  upper_bound:
+    range: float
+    description: Upper plausibility/validity bound for the value.
+
+  sample_name:
+    description: Name/identifier of the physical sample.
+
+  datetime_collected:
+    range: datetime
+    description: Date/time the sample was collected.
+
+  latitude:
+    range: float
+    slot_uri: WGS84:lat
+    description: Latitude (WGS84 decimal degrees).
+
+  longitude:
+    range: float
+    slot_uri: WGS84:long
+    description: Longitude (WGS84 decimal degrees).
+
+  location_description:
+    description: Free-text description of the sampling location.
+
+  # --- method-dimension slots ---
+  attr_id:
+    description: Identifier for a method/flag/treatment/sensor (Methods & Attributes `attr_id`).
+
+  attr_type:
+    range: AttrTypeEnum
+    description: Kind of attribute identified by `attr_id`.
+
+  attr_description:
+    description: Description of the method/flag/treatment/sensor.
+
+  analysis_detection_limit:
+    range: float
+    description: Analysis detection limit.
+
+  analysis_precision:
+    range: float
+    description: Analysis precision.
+
+  instrument_precision:
+    range: float
+    description: Instrument precision.
+
+  method_instrument:
+    description: Instrument used.
+
+  method_reference:
+    description: Citation/reference for the method.
+
+  method_hold_time:
+    description: Sample hold time before analysis.
+
+  method_temp:
+    description: Temperature condition of the method.
+
+  method_light:
+    description: Light condition of the method.
+
+  method_atmosphere:
+    description: Atmospheric condition of the method.
+
+  method_moisture:
+    description: Moisture condition of the method.
+
+  method_medium:
+    description: Medium of the method.
+
+  method_time:
+    description: Timing detail of the method.
+
+  method_lab_contact:
+    description: Laboratory contact.
+
+  method_instrument_operator:
+    description: Instrument operator.
+
+  method_lab:
+    description: Laboratory that performed the analysis.
+
+  sample:
+    range: Sample
+    inlined: false
+    description: Foreign key to the sample dimension.
+
+  variable:
+    range: MeasurementVariable
+    inlined: false
+    description: Foreign key to the variable dimension.
+
+  method:
+    range: Method
+    inlined: false
+    description: Foreign key to the method dimension (Full RF).
+
+  numeric_value:
+    range: float
+    slot_uri: nmdc:numeric_value
+    description: The numeric measure (kept typed for Parquet stats / pushdown).
+
+  string_value:
+    range: string
+    description: The measure when it is textual (typed EAV column, sparse).
+
+  datetime_value:
+    range: datetime
+    description: The measure when it is a date/time (typed EAV column, sparse).
+
+  raw_value:
+    range: string
+    slot_uri: nmdc:raw_value
+    description: The unnormalized atomic string as reported (e.g. "2.2 mg/L").
+
+  flag:
+    multivalued: true
+    description: Quality/other flags for the measurement (`{...}_flag`).
+
+  treatment_id:
+    description: Treatment identifier applied to this measurement.
+
+  datetime_measured:
+    range: datetime
+    description: Date/time the measurement was made.
+
+  time_elapsed:
+    range: float
+    description: Elapsed time for a time-series measurement.
+
+  measurements:
+    range: Measurement
+    multivalued: true
+    inlined_as_list: true
+    description: The measurement fact table for the dataset.
+
+  variables:
+    range: MeasurementVariable
+    multivalued: true
+    inlined_as_list: true
+    description: The variable dimension (the data dictionary) for the dataset.
+
+  samples:
+    range: Sample
+    multivalued: true
+    inlined_as_list: true
+    description: The sample dimension for the dataset.
+    
+  methods:
+    range: Method
+    multivalued: true
+    inlined_as_list: true
+    description: The method dimension for the dataset.
+
+# =============================================================================
+# ENUMS (from the Full reporting-format controlled_vocabulary.md)
+# =============================================================================
 enums:
-  PersonStatus:
-    description:
-      The vital status of a person
+
+  UnitEnum:
+    description: UCUM-coded units permitted for ESS-DIVE sample-data measurements.
     permissible_values:
-      ALIVE:
-        description: the person is living
-        meaning: PATO:0001421
-      DEAD:
-        description: the person is deceased
-        meaning: PATO:0001422
-      UNKNOWN:
-        description: the vital status is not known
-        todos:
-          - map this to an ontology
+      degree Celsius: {description: "UCUM: Cel", meaning: ucum:Cel}
+      microsiemens per centimeter: {description: "UCUM: uS/cm", meaning: ucum:uS/cm}
+      milligrams per liter: {description: "UCUM: mg/L", meaning: ucum:mg/L}
+      percent saturation: {description: "UCUM: %{saturation}"}
+      pH: {description: "UCUM: [pH]"}
+      moles per kilogram: {description: "UCUM: mol/kg", meaning: ucum:mol/kg}
+      moles per liter: {description: "UCUM: mol/L", meaning: ucum:mol/L}
+      percent: {description: "UCUM: %"}
+      per mille: {description: "UCUM: /10*2"}
+      count: {description: "UCUM: {count}"}
+      milliliter: {description: "UCUM: mL", meaning: ucum:mL}
+      liter: {description: "UCUM: L", meaning: ucum:L}
+      millimeter: {description: "UCUM: mm", meaning: ucum:mm}
+      centimeter: {description: "UCUM: cm", meaning: ucum:cm}
+      meter: {description: "UCUM: m", meaning: ucum:m}
+      kilometer: {description: "UCUM: km", meaning: ucum:km}
+      milligram: {description: "UCUM: mg", meaning: ucum:mg}
+      gram: {description: "UCUM: g", meaning: ucum:g}
+      kilogram: {description: "UCUM: kg", meaning: ucum:kg}
+      feet (international): {description: "UCUM: [ft_i]"}
+
+  DataTypeEnum:
+    description: Data type of the values in a data-file column.
+    permissible_values:
+      text:
+      numeric:
+      date:
+      datetime:
+
+  StatisticEnum:
+    description: Statistic applied to a measured variable (Data Dictionary statistic_*).
+    permissible_values:
+      mean:
+        description: ISO 3534:2006-1 sample mean (arithmetic average).
+        meaning: STATO:0000401
+      minimum:
+        description: Minimum value.
+      median:
+        description: ISO 3534:2006-1 sample median.
+        meaning: STATO:0000574
+      maximum:
+        description: Maximum value.
+      total:
+        description: Sum or cumulative amount over the sampling period.
+      standard deviation:
+        description: ISO 3534:2006-1 (sample) standard deviation.
+        meaning: STATO:0000237
+      standard error:
+        description: ISO 3534:2006-1 standard error of an estimator.
+      measurement uncertainty:
+        description: JCGM 200:2012 measurement uncertainty.
+      R2:
+        description: Coefficient of determination.
+      RMSE:
+        description: Root mean square error.
+      p-value:
+        description: ISO 3534:2006-1 p-value.
+        meaning: STATO:0000700
+      CV:
+        description: ISO 3534:2006-1 sample coefficient of variation.
+      covariance:
+        description: ISO 3534:2006-1 sample covariance.
+
+  RepresentationTemporalEnum:
+    description: Temporal representation / interval of the measurement.
+    permissible_values:
+      year:
+      month:
+      day:
+      2-hour:
+      hour:
+      30-minute:
+      15-minute:
+      5-minute:
+      minute:
+      second:
+      hertz:
+      other:
+
+  AttrTypeEnum:
+    description: Kind of attribute identified in the Full Methods & Attributes file.
+    permissible_values:
+      method_id:
+        description: Identifier for method.
+      flag_id:
+        description: Identifier for flag.
+      treatment_id:
+        description: Identifier for treatment.
+      sensor_id:
+        description: Identifier for sensor.

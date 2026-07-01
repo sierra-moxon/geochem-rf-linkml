@@ -125,8 +125,8 @@ lint:
 gen-doc: _gen-yaml && _add-artifacts
   uv run gen-doc {{gen_doc_args}} -d {{docdir}} {{source_schema_path}}
   @# Generate a big Mermaid ER diagram of every class as its own doc page.
-  printf '# Entity-Relationship Diagram\n\nAuto-generated Mermaid ER diagram of every class in the schema.\n\n' > {{docdir}}/erdiagram.md
-  uv run gen-erdiagram --format markdown --include-upstream {{source_schema_path}} >> {{docdir}}/erdiagram.md
+  printf '# Entity Relationship Diagram\n\nThe following diagram shows every class in the schema and the relationships between them.\n\n' > {{docdir}}/erdiagram.md
+  uv run gen-erdiagram --format markdown --no-structural {{source_schema_path}} >> {{docdir}}/erdiagram.md
 
 # Build docs and run test server
 [group('model development')]
@@ -231,8 +231,16 @@ _gen-yaml:
   -mkdir -p {{distrib_schema_path}}
   uv run gen-yaml {{source_schema_path}} > {{distrib_schema_path}}/{{schema_name}}.yaml
 
-# Overridable recipe to add project-specific artifacts to the distribution schema path
+# Overridable recipe to add project-specific artifacts to the distribution schema path.
+# Copies the generated serializations into docs/ so they are published to gh-pages.
+# (Leading "-" ignores errors when a given artifact has not been generated yet.)
 _add-artifacts:
+  -mkdir -p docs/downloads
+  -cp {{dest}}/excel/{{schema_name}}.xlsx docs/downloads/{{schema_name}}.xlsx
+  -cp {{dest}}/sqlschema/{{schema_name}}.sql docs/downloads/{{schema_name}}.sql
+  -cp {{dest}}/jsonschema/{{schema_name}}.schema.json docs/downloads/{{schema_name}}.schema.json
+  -cp {{dest}}/owl/{{schema_name}}.owl.ttl docs/downloads/{{schema_name}}.owl.ttl
+  -cp {{distrib_schema_path}}/{{schema_name}}.yaml docs/downloads/{{schema_name}}.yaml
 
 # Run documentation server
 _serve:

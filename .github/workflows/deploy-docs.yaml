@@ -56,7 +56,10 @@ jobs:
       - name: Install dependencies
         run: uv sync --group dev --no-progress
 
-      - name: Generate schema documentation
+      - name: Generate schema serializations (excel, sql-ddl, jsonschema, rdf/owl)
+        run: just gen-project
+
+      - name: Generate schema documentation (incl. ER diagram) and deploy to gh-pages
         run: |
           just gen-doc
           uv run mkdocs gh-deploy --force

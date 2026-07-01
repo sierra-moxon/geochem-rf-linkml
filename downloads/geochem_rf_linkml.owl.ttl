@@ -28,69 +28,69 @@ dimension.""" .
 geochem_rf_linkml:Dataset a owl:Class ;
     rdfs:label "Dataset" ;
     rdfs:subClassOf [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:methods ],
+            owl:allValuesFrom geochem_rf_linkml:Sample ;
+            owl:onProperty geochem_rf_linkml:samples ],
         [ a owl:Restriction ;
-            owl:allValuesFrom geochem_rf_linkml:Method ;
-            owl:onProperty geochem_rf_linkml:methods ],
-        [ a owl:Restriction ;
-            owl:minCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:id ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom geochem_rf_linkml:Measurement ;
-            owl:onProperty geochem_rf_linkml:measurements ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:anyURI ;
-            owl:onProperty geochem_rf_linkml:id ],
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:name ],
         [ a owl:Restriction ;
             owl:allValuesFrom geochem_rf_linkml:MeasurementVariable ;
             owl:onProperty geochem_rf_linkml:variables ],
         [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:variables ],
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:id ],
         [ a owl:Restriction ;
             owl:minCardinality 0 ;
             owl:onProperty geochem_rf_linkml:measurements ],
         [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:samples ],
+        [ a owl:Restriction ;
             owl:allValuesFrom xsd:string ;
             owl:onProperty geochem_rf_linkml:name ],
         [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:name ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom geochem_rf_linkml:Sample ;
-            owl:onProperty geochem_rf_linkml:samples ],
-        [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:name ],
+            owl:onProperty geochem_rf_linkml:methods ],
         [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
+            owl:allValuesFrom geochem_rf_linkml:Measurement ;
+            owl:onProperty geochem_rf_linkml:measurements ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:Method ;
+            owl:onProperty geochem_rf_linkml:methods ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:anyURI ;
             owl:onProperty geochem_rf_linkml:id ],
         [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:samples ] ;
+            owl:onProperty geochem_rf_linkml:variables ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:name ] ;
     skos:definition "A single ESS-DIVE sample-data package: the whole `Measurement` fact table plus the `MeasurementVariable` data-dictionary dimension (and the sample / method dimensions)." ;
     skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
 
 geochem_rf_linkml:Attribute a owl:Class ;
     rdfs:label "Attribute" ;
     rdfs:subClassOf [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:label ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:label ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
             owl:allValuesFrom xsd:anyURI ;
             owl:onProperty geochem_rf_linkml:id ],
         [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:label ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:id ],
-        [ a owl:Restriction ;
-            owl:minCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:label ],
-        [ a owl:Restriction ;
             owl:minCardinality 1 ;
             owl:onProperty geochem_rf_linkml:id ],
         [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
+            owl:minCardinality 1 ;
             owl:onProperty geochem_rf_linkml:label ] ;
     skos:definition "A domain, measurement, attribute, property, or descriptor for something measured. The identity of *what* is measured (the \"bare concept\", e.g. `temperature`). Mirrors the BERtron/NMDC Attribute pattern: a thin data-dictionary anchor whose `id` is a controlled-vocabulary CURIE." ;
     skos:exactMatch nmdc:AttributeValue ;
@@ -225,56 +225,86 @@ ucum:mm a owl:Class ;
 geochem_rf_linkml:Measurement a owl:Class ;
     rdfs:label "Measurement" ;
     rdfs:subClassOf [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:raw_value ],
+        [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:flag ],
+            owl:onProperty geochem_rf_linkml:time_elapsed ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:treatment_id ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:datetime_measured ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:treatment_id ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:numeric_value ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:datetime_value ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:sample ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:MeasurementVariable ;
+            owl:onProperty geochem_rf_linkml:variable ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:string_value ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:dateTime ;
+            owl:onProperty geochem_rf_linkml:datetime_measured ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:raw_value ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:treatment_id ],
         [ a owl:Restriction ;
             owl:minCardinality 1 ;
             owl:onProperty geochem_rf_linkml:variable ],
         [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:raw_value ],
+            owl:onProperty geochem_rf_linkml:string_value ],
         [ a owl:Restriction ;
             owl:allValuesFrom xsd:float ;
             owl:onProperty geochem_rf_linkml:time_elapsed ],
         [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:string_value ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:variable ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:numeric_value ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:sample ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:flag ],
+        [ a owl:Restriction ;
             owl:allValuesFrom xsd:dateTime ;
             owl:onProperty geochem_rf_linkml:datetime_value ],
         [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:datetime_value ],
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:flag ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
             owl:onProperty geochem_rf_linkml:time_elapsed ],
         [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:raw_value ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:numeric_value ],
-        [ a owl:Restriction ;
             owl:maxCardinality 1 ;
             owl:onProperty geochem_rf_linkml:datetime_measured ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom geochem_rf_linkml:MeasurementVariable ;
-            owl:onProperty geochem_rf_linkml:variable ],
         [ a owl:Restriction ;
             owl:allValuesFrom geochem_rf_linkml:Method ;
             owl:onProperty geochem_rf_linkml:method ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:time_elapsed ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:string_value ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:treatment_id ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:dateTime ;
-            owl:onProperty geochem_rf_linkml:datetime_measured ],
         [ a owl:Restriction ;
             owl:allValuesFrom geochem_rf_linkml:Sample ;
             owl:onProperty geochem_rf_linkml:sample ],
@@ -283,40 +313,10 @@ geochem_rf_linkml:Measurement a owl:Class ;
             owl:onProperty geochem_rf_linkml:numeric_value ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:treatment_id ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:treatment_id ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:variable ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:string_value ],
-        [ a owl:Restriction ;
-            owl:minCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:sample ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
             owl:onProperty geochem_rf_linkml:datetime_value ],
         [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:raw_value ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:sample ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:numeric_value ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:datetime_measured ],
-        [ a owl:Restriction ;
             owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:flag ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:string_value ] ;
+            owl:onProperty geochem_rf_linkml:raw_value ] ;
     skos:definition "A single measured value: the \"fact\" of the star schema. Points at a `Sample` and a `MeasurementVariable` (and optionally a `Method`) by identifier, and carries the actual measure(s)." ;
     skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
 
@@ -683,139 +683,139 @@ geochem_rf_linkml:MeasurementVariable a owl:Class ;
     rdfs:label "MeasurementVariable" ;
     rdfs:subClassOf [ a owl:Restriction ;
             owl:minCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:definition ],
+            owl:onProperty geochem_rf_linkml:id ],
         [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
+            owl:allValuesFrom xsd:anyURI ;
             owl:onProperty geochem_rf_linkml:unit_cv_id ],
         [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:data_type ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:statistic_temporal ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:unit ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom geochem_rf_linkml:DataTypeEnum ;
-            owl:onProperty geochem_rf_linkml:data_type ],
-        [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:statistic_spatial ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:statistic_measurement ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:lower_bound ],
+            owl:onProperty geochem_rf_linkml:upper_bound ],
         [ a owl:Restriction ;
             owl:allValuesFrom geochem_rf_linkml:StatisticEnum ;
             owl:onProperty geochem_rf_linkml:statistic_spatial ],
         [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:DataTypeEnum ;
+            owl:onProperty geochem_rf_linkml:data_type ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:upper_bound ],
+        [ a owl:Restriction ;
             owl:minCardinality 0 ;
             owl:onProperty geochem_rf_linkml:data_type ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:column_or_row_long_name ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:column_or_row_long_name ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:column_or_row_name ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:definition ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:definition ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom geochem_rf_linkml:StatisticEnum ;
+            owl:onProperty geochem_rf_linkml:statistic_measurement ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:definition ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:upper_bound ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
             owl:onProperty geochem_rf_linkml:unit_basis ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:unit ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:statistic_temporal ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:statistic_measurement ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:representation_temporal ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
             owl:onProperty geochem_rf_linkml:column_or_row_long_name ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:id ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:statistic_spatial ],
         [ a owl:Restriction ;
             owl:allValuesFrom geochem_rf_linkml:RepresentationTemporalEnum ;
             owl:onProperty geochem_rf_linkml:representation_temporal ],
         [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:unit_basis ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:anyURI ;
-            owl:onProperty geochem_rf_linkml:unit_cv_id ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:column_or_row_name ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:missing_value_code ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:representation_temporal ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:statistic_spatial ],
-        [ a owl:Restriction ;
-            owl:minCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:id ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:representation_temporal ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom geochem_rf_linkml:StatisticEnum ;
             owl:onProperty geochem_rf_linkml:statistic_measurement ],
         [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:missing_value_code ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:upper_bound ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:lower_bound ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:upper_bound ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:id ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:statistic_temporal ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:column_or_row_name ],
-        [ a owl:Restriction ;
             owl:allValuesFrom geochem_rf_linkml:StatisticEnum ;
             owl:onProperty geochem_rf_linkml:statistic_temporal ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:representation_temporal ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
             owl:onProperty geochem_rf_linkml:missing_value_code ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:unit_cv_id ],
         [ a owl:Restriction ;
             owl:minCardinality 1 ;
             owl:onProperty geochem_rf_linkml:unit ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:statistic_measurement ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:column_or_row_name ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:column_or_row_long_name ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:unit_cv_id ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:float ;
-            owl:onProperty geochem_rf_linkml:lower_bound ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:id ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:float ;
-            owl:onProperty geochem_rf_linkml:upper_bound ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:definition ],
         [ a owl:Restriction ;
             owl:allValuesFrom geochem_rf_linkml:UnitEnum ;
             owl:onProperty geochem_rf_linkml:unit ],
         [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:definition ],
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:column_or_row_name ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:column_or_row_name ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:missing_value_code ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:statistic_spatial ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:unit_cv_id ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:statistic_temporal ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:missing_value_code ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:data_type ],
         [ a owl:Restriction ;
             owl:allValuesFrom xsd:string ;
             owl:onProperty geochem_rf_linkml:unit_basis ],
         [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:column_or_row_long_name ],
+            owl:onProperty geochem_rf_linkml:unit_basis ],
         geochem_rf_linkml:Attribute ;
     owl:hasKey ( geochem_rf_linkml:label geochem_rf_linkml:unit geochem_rf_linkml:unit_basis geochem_rf_linkml:statistic_measurement geochem_rf_linkml:statistic_spatial geochem_rf_linkml:statistic_temporal geochem_rf_linkml:representation_temporal ) ;
     skos:definition "A fully-qualified measured variable: the bare `Attribute` concept plus its unit and statistical/temporal qualifiers. One row of the ESS-DIVE Data Dictionary. This is the \"variable dimension\" of the star schema; the dimension business key is the qualified-identity tuple (see `unique_keys`), NOT the arbitrary user column name." ;
@@ -824,185 +824,185 @@ geochem_rf_linkml:MeasurementVariable a owl:Class ;
 geochem_rf_linkml:Method a owl:Class ;
     rdfs:label "Method" ;
     rdfs:subClassOf [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_lab_contact ],
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_medium ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_light ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_lab_contact ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_light ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
             owl:onProperty geochem_rf_linkml:method_instrument ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:instrument_precision ],
+            owl:onProperty geochem_rf_linkml:method_lab ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_temp ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_atmosphere ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_id ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_reference ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_time ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:analysis_detection_limit ],
         [ a owl:Restriction ;
             owl:allValuesFrom xsd:float ;
-            owl:onProperty geochem_rf_linkml:instrument_precision ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_instrument_operator ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_hold_time ],
-        [ a owl:Restriction ;
-            owl:minCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:attr_description ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_temp ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
             owl:onProperty geochem_rf_linkml:analysis_precision ],
         [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:method_temp ],
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_type ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_light ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
             owl:onProperty geochem_rf_linkml:lower_bound ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_lab ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
             owl:onProperty geochem_rf_linkml:attr_type ],
         [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_time ],
+            owl:onProperty geochem_rf_linkml:instrument_precision ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:attr_id ],
         [ a owl:Restriction ;
             owl:minCardinality 0 ;
             owl:onProperty geochem_rf_linkml:analysis_detection_limit ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_reference ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_moisture ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_lab_contact ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:instrument_precision ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_moisture ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_hold_time ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_reference ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_time ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_moisture ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:analysis_detection_limit ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_description ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:lower_bound ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_id ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_atmosphere ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_instrument_operator ],
+        [ a owl:Restriction ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:attr_description ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_temp ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:upper_bound ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_temp ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_medium ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_time ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_lab ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_hold_time ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_instrument ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:attr_description ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:method_instrument_operator ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:method_instrument ],
         [ a owl:Restriction ;
             owl:allValuesFrom geochem_rf_linkml:AttrTypeEnum ;
             owl:onProperty geochem_rf_linkml:attr_type ],
         [ a owl:Restriction ;
-            owl:allValuesFrom xsd:float ;
-            owl:onProperty geochem_rf_linkml:upper_bound ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:float ;
+            owl:minCardinality 0 ;
             owl:onProperty geochem_rf_linkml:analysis_precision ],
         [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_light ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_lab_contact ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:analysis_detection_limit ],
-        [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:lower_bound ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:float ;
-            owl:onProperty geochem_rf_linkml:lower_bound ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_instrument ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:upper_bound ],
+            owl:onProperty geochem_rf_linkml:method_medium ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
             owl:onProperty geochem_rf_linkml:method_atmosphere ],
         [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_reference ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_atmosphere ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_instrument_operator ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:attr_id ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_medium ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:attr_id ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:method_reference ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:method_instrument_operator ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_instrument ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_light ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_medium ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
             owl:onProperty geochem_rf_linkml:method_lab ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:method_light ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
             owl:onProperty geochem_rf_linkml:method_hold_time ],
         [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:attr_description ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:float ;
-            owl:onProperty geochem_rf_linkml:analysis_detection_limit ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_hold_time ],
-        [ a owl:Restriction ;
-            owl:minCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:attr_id ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:upper_bound ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_moisture ],
-        [ a owl:Restriction ;
             owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:analysis_precision ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:attr_description ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:method_medium ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_lab ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_temp ],
-        [ a owl:Restriction ;
-            owl:minCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:attr_type ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_moisture ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:method_moisture ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_reference ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:method_lab_contact ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
-            owl:onProperty geochem_rf_linkml:method_time ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
             owl:onProperty geochem_rf_linkml:instrument_precision ],
         [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:analysis_precision ],
+        [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:method_atmosphere ],
+            owl:onProperty geochem_rf_linkml:method_lab_contact ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:method_instrument_operator ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:method_time ] ;
+            owl:onProperty geochem_rf_linkml:upper_bound ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:upper_bound ] ;
     owl:hasKey ( geochem_rf_linkml:attr_id geochem_rf_linkml:attr_type ) ;
     skos:definition "One row of the Full \"Methods & Attributes\" file (`*_sample_attr.csv`): the method/flag/treatment/sensor definition referenced per-measurement." ;
     skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
@@ -1011,49 +1011,49 @@ geochem_rf_linkml:Sample a owl:Class ;
     rdfs:label "Sample" ;
     rdfs:subClassOf [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:datetime_collected ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:datetime_collected ],
-        [ a owl:Restriction ;
-            owl:minCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:sample_name ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:location_description ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:latitude ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:float ;
             owl:onProperty geochem_rf_linkml:latitude ],
         [ a owl:Restriction ;
             owl:allValuesFrom xsd:string ;
             owl:onProperty geochem_rf_linkml:sample_name ],
         [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:location_description ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:datetime_collected ],
+        [ a owl:Restriction ;
             owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:latitude ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
             owl:onProperty geochem_rf_linkml:longitude ],
         [ a owl:Restriction ;
             owl:maxCardinality 1 ;
             owl:onProperty geochem_rf_linkml:sample_name ],
+        [ a owl:Restriction ;
+            owl:minCardinality 0 ;
+            owl:onProperty geochem_rf_linkml:longitude ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:float ;
+            owl:onProperty geochem_rf_linkml:longitude ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom xsd:string ;
+            owl:onProperty geochem_rf_linkml:location_description ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:datetime_collected ],
+        [ a owl:Restriction ;
+            owl:maxCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:latitude ],
         [ a owl:Restriction ;
             owl:allValuesFrom xsd:dateTime ;
             owl:onProperty geochem_rf_linkml:datetime_collected ],
         [ a owl:Restriction ;
             owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:longitude ],
-        [ a owl:Restriction ;
-            owl:allValuesFrom xsd:string ;
             owl:onProperty geochem_rf_linkml:location_description ],
         [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:longitude ],
-        [ a owl:Restriction ;
-            owl:minCardinality 0 ;
-            owl:onProperty geochem_rf_linkml:latitude ],
-        [ a owl:Restriction ;
-            owl:maxCardinality 1 ;
-            owl:onProperty geochem_rf_linkml:location_description ] ;
+            owl:minCardinality 1 ;
+            owl:onProperty geochem_rf_linkml:sample_name ] ;
     skos:definition "A physical sample (or a time point on a sample) that measurements are made on. The sample dimension of the star schema." ;
     skos:inScheme <https://w3id.org/sierra-moxon/geochem-rf-linkml> .
 

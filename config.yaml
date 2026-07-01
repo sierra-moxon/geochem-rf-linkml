@@ -9,7 +9,7 @@
 #  create its own output directory when driven through this config file.)
 includes:
   - excel
-  - sqlddl
+  - sqltable
   - jsonschema
 
 # Set the arguments for the generators (no matter if they run or not)
@@ -24,7 +24,7 @@ generator_args:
     mixins_as_expressions: true
   jsonschema:
     mergeimports: true
-  sqlddl:
+  sqltable:
     mergeimports: true
 
 ...
